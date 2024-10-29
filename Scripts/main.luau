@@ -3,6 +3,7 @@ local HttpService = game:GetService("HttpService")
 local url = {
     AnimationReplacer = "https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/refs/heads/main/Scripts/AnimateReplacer/AnimateReplacer.luau",
     InfiniteYield = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source",
+    UniversalSynSaveInstance = "https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/refs/heads/main/saveinstance.luau"
 }
 local constants = {
     AnimateReplacer = {
@@ -51,22 +52,6 @@ local AnimationReplacerButton = ScriptsTab:CreateButton({
 		pcall(function()
 			loadstring(game:HttpGet(url.AnimationReplacer))()
 		end)
-		Rayfield:Notify({
-			Title = "Scripts | Notify",
-			Content = "Your animate script replaced!",
-			Duration = 6.5,
-			-- Image = 4483362458,
-			Actions = { -- Notification Buttons
-
-				Ignore = { -- Duplicate this table (or remove it) to add and remove buttons to the notification.
-					Name = "Continue!",
-					-- Callback = function()
-					-- 	print("The user tapped Okay!")
-					-- end
-				},
-
-			},
-		})
 	end,
 })
 
@@ -75,6 +60,17 @@ local InfiniteYieldButton = ScriptsTab:CreateButton({
 	Callback = function()
 		pcall(function()
 			loadstring(game:HttpGet(url.InfiniteYield))()
+		end)
+	end,
+})
+
+local UniversalSynSaveInstanceButton = ScriptsTab:CreateButton({
+	Name = "UniversalSynSaveInstance",
+	Callback = function()
+		pcall(function()
+			local synsaveinstance = loadstring(game:HttpGet(url.UniversalSynSaveInstance, true), "saveinstance")()
+            local options = { SaveBytecode = true, NilInstances = true, RemovePlayerCharacters = false, IsolatePlayers = true, IsolateLocalPlayerCharacter = true, IsolateStarterPlayer = true, IsolateLocalPlayer = true }
+            synsaveinstance(options)
 		end)
 	end,
 })
