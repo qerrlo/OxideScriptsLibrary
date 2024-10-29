@@ -3,7 +3,8 @@ local HttpService = game:GetService("HttpService")
 local url = {
     AnimateReplacer = "https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/refs/heads/main/Scripts/AnimateReplacer/AnimateReplacer.luau",
     InfiniteYield = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source",
-    UniversalSynSaveInstance = "https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/refs/heads/main/saveinstance.luau"
+    UniversalSynSaveInstance = "https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/refs/heads/main/saveinstance.luau",
+    Dex Explorer = "https://github.com/Hosvile/DEX-Explorer/releases/latest/download/main.lua",
 }
 local constants = {
     AnimateReplacer = {
@@ -71,6 +72,16 @@ local UniversalSynSaveInstanceButton = ScriptsTab:CreateButton({
 			local synsaveinstance = loadstring(game:HttpGet(url.UniversalSynSaveInstance, true), "saveinstance")()
             local options = { SaveBytecode = true, NilInstances = true, RemovePlayerCharacters = false, IsolatePlayers = true, IsolateLocalPlayerCharacter = true, IsolateStarterPlayer = true, IsolateLocalPlayer = true }
             synsaveinstance(options)
+		end)
+	end,
+})
+
+local DexExplorerButton = ScriptsTab:CreateButton({
+	Name = "Dex Explorer",
+	Callback = function()
+		pcall(function()
+			local __func = loadstring(game:HttpGet("https://github.com/Hosvile/DEX-Explorer/releases/latest/download/main.lua", true))
+            __func(__func)
 		end)
 	end,
 })
