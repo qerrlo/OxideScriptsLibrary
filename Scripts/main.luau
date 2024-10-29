@@ -4,7 +4,7 @@ local url = {
     AnimateReplacer = "https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/refs/heads/main/Scripts/AnimateReplacer/AnimateReplacer.luau",
     InfiniteYield = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source",
     UniversalSynSaveInstance = "https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/refs/heads/main/saveinstance.luau",
-    Dex Explorer = "https://github.com/Hosvile/DEX-Explorer/releases/latest/download/main.lua",
+    DexExplorer = "https://github.com/Hosvile/DEX-Explorer/releases/latest/download/main.lua",
 }
 local constants = {
     AnimateReplacer = {
@@ -80,7 +80,7 @@ local DexExplorerButton = ScriptsTab:CreateButton({
 	Name = "Dex Explorer",
 	Callback = function()
 		pcall(function()
-			local __func = loadstring(game:HttpGet("https://github.com/Hosvile/DEX-Explorer/releases/latest/download/main.lua", true))
+			local __func = loadstring(game:HttpGet(url.DexExplorer, true))
             __func(__func)
 		end)
 	end,
