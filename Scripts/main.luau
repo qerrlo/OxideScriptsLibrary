@@ -1,12 +1,15 @@
 local HttpService = game:GetService("HttpService")
 
 local url = {
-    AnimationReplacer = "https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/refs/heads/main/Scripts/AnimateReplacer/AnimateReplacer.lua",
+    AnimationReplacer = "https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/refs/heads/main/Scripts/AnimateReplacer/AnimateReplacer.luau",
     InfiniteYield = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source",
 }
 local constants = {
+    AnimateReplacer = {
+        version = HttpService:JSONDecode(game:HttpGet("https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/refs/heads/main/Scripts/AnimateReplacer/version")).Version,
+    },
     InfiniteYield = {
-        version = HttpService:JSONDecode(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/version")).Version
+        version = HttpService:JSONDecode(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/version")).Version,
     },
 }
 
@@ -43,7 +46,7 @@ local ScriptsTab = Window:CreateTab("📜 Scripts", nil) -- Title, Image
 local Section = ScriptsTab:CreateSection("Main")
 
 local AnimationReplacerButton = ScriptsTab:CreateButton({
-	Name = "Animation Replacer v1.0",
+	Name = "Animation Replacer v" .. constants.AnimationReplacer.version,
 	Callback = function()
 		pcall(function()
 			loadstring(game:HttpGet(url.AnimationReplacer))()
