@@ -80,8 +80,9 @@ local DexExplorerButton = ScriptsTab:CreateButton({
 	Name = "Dex Explorer",
 	Callback = function()
 		pcall(function()
-			local __func = loadstring(game:HttpGet(url.DexExplorer, true))
-            __func(__func)
+			local __function = loadstring(game:HttpGet(url.DexExplorer, true))
+
+            		__function(__function)
 		end)
 	end,
 })
