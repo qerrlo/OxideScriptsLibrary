@@ -1,7 +1,7 @@
 local HttpService = game:GetService("HttpService")
 
 local url = {
-    AnimationReplacer = "https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/refs/heads/main/Scripts/AnimateReplacer/AnimateReplacer.luau",
+    AnimateReplacer = "https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/refs/heads/main/Scripts/AnimateReplacer/AnimateReplacer.luau",
     InfiniteYield = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source",
     UniversalSynSaveInstance = "https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/refs/heads/main/saveinstance.luau"
 }
@@ -46,11 +46,11 @@ local Window = Rayfield:CreateWindow({
 local ScriptsTab = Window:CreateTab("📜 Scripts", nil) -- Title, Image
 local Section = ScriptsTab:CreateSection("Main")
 
-local AnimationReplacerButton = ScriptsTab:CreateButton({
-	Name = "Animation Replacer v" .. constants.AnimationReplacer.version,
+local AnimateReplacerButton = ScriptsTab:CreateButton({
+	Name = "Animation Replacer v" .. constants.AnimateReplacer.version,
 	Callback = function()
 		pcall(function()
-			loadstring(game:HttpGet(url.AnimationReplacer))()
+			loadstring(game:HttpGet(url.AnimateReplacer))()
 		end)
 	end,
 })
