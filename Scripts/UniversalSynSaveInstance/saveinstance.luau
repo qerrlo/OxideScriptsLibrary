@@ -1727,7 +1727,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		local PlaceName = game.PlaceId
 
 		pcall(function()
-		    PlaceName ..= "_" .. MarketplaceService:GetProductInfo(PlaceName).Name
+		    PlaceName ..= "_" .. service.MarketplaceService:GetProductInfo(PlaceName).Name
 		end)
 
 		local function sanitizeFileName(str)
