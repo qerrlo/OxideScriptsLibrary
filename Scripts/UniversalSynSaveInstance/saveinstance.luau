@@ -1757,10 +1757,10 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		if IsModel then
 			placename = (
 				FilePath
-				or sanitizeFileName("model " .. PlaceName .. " " .. (ToSaveInstance or tmp[1] or game):GetFullName())
+				or sanitizeFileName("Model_" .. PlaceName .. "_" .. (ToSaveInstance or tmp[1] or game):GetFullName())
 			) .. ".rbxmx"
 		else
-			placename = (FilePath or sanitizeFileName("Place_" .. PlaceName)) .. ".rbxl"
+			placename = (FilePath or sanitizeFileName("Place_" .. PlaceName)) .. ".rbxlx"
 		end
 
 		if mode ~= "scripts" then
