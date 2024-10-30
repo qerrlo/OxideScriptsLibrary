@@ -1727,11 +1727,11 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		local PlaceName = game.PlaceId
 
 		pcall(function()
-			PlaceName ..= " " .. service.MarketplaceService:GetProductInfo(PlaceName).Name
+		    PlaceName ..= "_" .. MarketplaceService:GetProductInfo(PlaceName).Name
 		end)
 
 		local function sanitizeFileName(str)
-			return string.sub(string.gsub(string.gsub(string.gsub(str, "[^%w _]", ""), " +", " "), " +$", ""), 1, 240)
+		    return string.sub(string.gsub(string.gsub(string.gsub(str, "[^%w _]", "_"), " +", "_"), " +$", "_"), 1, 240)
 		end
 
 		if ToSaveInstance then
@@ -1760,7 +1760,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 				or sanitizeFileName("model " .. PlaceName .. " " .. (ToSaveInstance or tmp[1] or game):GetFullName())
 			) .. ".rbxmx"
 		else
-			placename = (FilePath or sanitizeFileName("place " .. PlaceName)) .. ".rbxlx"
+			placename = (FilePath or sanitizeFileName("Place_" .. PlaceName)) .. ".rbxlx"
 		end
 
 		if mode ~= "scripts" then
