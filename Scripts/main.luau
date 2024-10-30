@@ -3,7 +3,7 @@ local HttpService = game:GetService("HttpService")
 local url = {
     AnimateReplacer = "https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/refs/heads/main/Scripts/AnimateReplacer/AnimateReplacer.luau",
     InfiniteYield = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source",
-    UniversalSynSaveInstance = "https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/refs/heads/main/saveinstance.luau",
+    UniversalSynSaveInstance = "https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/refs/heads/main/Scripts/UniversalSynSaveInstance/saveinstance.luau",
     DexExplorer = "https://github.com/Hosvile/DEX-Explorer/releases/latest/download/main.lua",
 }
 local constants = {
@@ -19,7 +19,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
 	Name = "🎃 Oxide Hub 🎃",
-	LoadingTitle = "Loaded!",
+	LoadingTitle = "Oxide Hub Loading...!",
 	LoadingSubtitle = "by qerrlo",
 	ConfigurationSaving = {
 		Enabled = true,
@@ -70,8 +70,8 @@ local UniversalSynSaveInstanceButton = ScriptsTab:CreateButton({
 	Callback = function()
 		pcall(function()
 			local synsaveinstance = loadstring(game:HttpGet(url.UniversalSynSaveInstance, true), "saveinstance")()
-            local options = { SaveBytecode = true, NilInstances = true, RemovePlayerCharacters = false, IsolatePlayers = true, IsolateLocalPlayerCharacter = true, IsolateStarterPlayer = true, IsolateLocalPlayer = true }
-            synsaveinstance(options)
+           		 local options = { SaveBytecode = true, NilInstances = true, RemovePlayerCharacters = false, IsolatePlayers = true, IsolateLocalPlayerCharacter = true, IsolateStarterPlayer = true, IsolateLocalPlayer = true }
+           		 synsaveinstance(options)
 		end)
 	end,
 })
