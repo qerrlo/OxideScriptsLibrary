@@ -1,7 +1,7 @@
 version = "1.0"
 
 local config = {
-	animationPack = "levitation";
+	animationPack = "Levitation";
 	includeToStarterAnimate = false;
 }
 
@@ -19,7 +19,7 @@ local humanoid = player.Character:FindFirstChildWhichIsA("Humanoid")
 local animate = player.Character:FindFirstChild("Animate")
 
 local animPacks = {
-	levitation = {
+	["Levitation"] = {
 		climb = {
 			ClimbAnim = "http://www.roblox.com/asset/?id=10921132092";
 		};
@@ -44,6 +44,33 @@ local animPacks = {
 		};
 		walk = {
 			WalkAnim = "http://www.roblox.com/asset/?id=10921140719";
+		};
+	};
+	["Stylized Female"] = {
+		climb = {
+			ClimbAnim = "http://www.roblox.com/asset/?id=4708184253";
+		};
+		fall = {
+			FallAnim = "http://www.roblox.com/asset/?id=4708186162";
+		};
+		idle = {
+			Animation1 = "http://www.roblox.com/asset/?id=4708191566";
+			Animation2 = "http://www.roblox.com/asset/?id=4708192150";
+		};
+		jump = {
+			JumpAnim = "http://www.roblox.com/asset/?id=4708188025";
+		};
+		run = {
+			RunAnim = "http://www.roblox.com/asset/?id=4708192705";
+		};
+		swim = {
+			Swim = "http://www.roblox.com/asset/?id=4708189360";
+		};
+		swimidle = {
+			SwimIdle = "http://www.roblox.com/asset/?id=4708190607";
+		};
+		walk = {
+			WalkAnim = "http://www.roblox.com/asset/?id=4708193840";
 		};
 	};
 }
