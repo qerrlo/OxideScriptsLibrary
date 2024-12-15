@@ -95,6 +95,38 @@ local function safeLoadstring(url, name)
     end
 end
 
+local function safeSaveInstance()
+    return function()
+        local success, result = pcall(function()
+            local synsaveinstance = loadstring(game:HttpGet(url.UniversalSynSaveInstance, true), "saveinstance")()
+            local options = {
+                SaveBytecode = true,
+                NilInstances = true,
+                RemovePlayerCharacters = false,
+                IsolatePlayers = true,
+                IsolateLocalPlayerCharacter = true,
+                IsolateStarterPlayer = true,
+                IsolateLocalPlayer = true
+            }
+            synsaveinstance(options)
+        end)
+        
+        if success then
+            Rayfield:Notify({
+                Title = "Success",
+                Content = "Game instance saved successfully",
+                Duration = 2
+            })
+        else
+            Rayfield:Notify({
+                Title = "Error",
+                Content = "Failed to save game instance",
+                Duration = 2
+            })
+        end
+    end
+end
+
 -- Кнопки скриптов
 ScriptsTab:CreateButton({
     Name = "UniversalSynSaveInstance v" .. (constants.UniversalSynSaveInstance or "Latest"),
