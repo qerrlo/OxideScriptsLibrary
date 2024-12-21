@@ -9,7 +9,9 @@ local url = {
     UniversalSynSaveInstance = "https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/refs/heads/main/Scripts/UniversalSynSaveInstance/saveinstance.luau",
     DexExplorer = "https://github.com/Hosvile/DEX-Explorer/releases/latest/download/main.lua",
     RemoteSpy = "https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua",
-    DarkDex = "https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/BypassedDarkDexV3.lua"
+    RemoteSpyMobile = "https://raw.githubusercontent.com/realredz/SimpleSpy/refs/heads/main/Mobile.lua",
+    DarkDex = "https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/BypassedDarkDexV3.lua",
+    DexExplorer_Keyless = "https://raw.githubusercontent.com/realredz/DEX-Explorer/refs/heads/main/Mobile.lua"
 }
 
 -- Получение версий скриптов
@@ -130,19 +132,16 @@ end
 -- Кнопки скриптов
 ScriptsTab:CreateButton({
     Name = "UniversalSynSaveInstance v" .. (constants.UniversalSynSaveInstance or "Latest"),
-    Info = "Replace your character animations",
     Callback = safeLoadstring(url.UniversalSynSaveInstance, "UniversalSynSaveInstance")
 })
 
 ScriptsTab:CreateButton({
     Name = "Animation Replacer v" .. (constants.AnimateReplacer or "Latest"),
-    Info = "Replace your character animations",
     Callback = safeLoadstring(url.AnimateReplacer, "Animation Replacer")
 })
 
 ScriptsTab:CreateButton({
     Name = "Infinite Yield v" .. (constants.InfiniteYield or "Latest"),
-    Info = "Admin Commands",
     Callback = safeLoadstring(url.InfiniteYield, "Infinite Yield")
 })
 
@@ -151,14 +150,17 @@ local UtilitySection = UtilityTab:CreateSection("Developer Tools")
 
 UtilityTab:CreateButton({
     Name = "Dex Explorer",
-    Info = "Game Explorer",
     Callback = safeLoadstring(url.DexExplorer, "Dex Explorer")
 })
 
 UtilityTab:CreateButton({
+    Name = "Dex Explorer [Keyless]",
+    Callback = safeLoadstring(url.DexExplorer_Keyless, "Dex Explorer Keyless")
+})
+
+UtilityTab:CreateButton({
     Name = "Remote Spy",
-    Info = "Monitor Remote Events",
-    Callback = safeLoadstring(url.RemoteSpy, "Remote Spy")
+    Callback = safeLoadstring(url.RemoteSpyMobile, "Remote Spy")
 })
 
 -- Анти-чит обход
