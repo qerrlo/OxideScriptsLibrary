@@ -2,4 +2,4 @@
 Oxide Scripts
 
 Credits:
-UniversalSynSaveInstance - github.com/luau/UniversalSynSaveInstance/
+UniversalSynSaveInstance - https://github.com/luau/UniversalSynSaveInstance/
