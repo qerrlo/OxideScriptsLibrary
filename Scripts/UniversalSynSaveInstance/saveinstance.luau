@@ -2025,11 +2025,38 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 			or service.Players.LocalPlayer
 	end
 
+	local function filterLinkedSource(str)
+		local o, r = pcall(service.HttpService.JSONDecode, service.HttpService, str)
+		if o and r.errors then
+			return
+		end
+		return true
+	end
+
+	local function replaceClassName(instance, InstanceName, ClassName, newClassName)
+		local InstanceOverride
+		if InstanceName ~= ClassName then -- TODO Compare against default instance instead (TouchTransmitter is called TouchInterest by default)
+			InstanceOverride = InstancesOverrides[instance]
+			if not InstanceOverride then
+				InstanceOverride = { Properties = { Name = "[" .. ClassName .. "] " .. InstanceName } }
+				InstancesOverrides[instance] = InstanceOverride
+			end
+		end
+		return newClassName, InstanceOverride
+	end
+
 	local function getsafeproperty(instance, propertyName)
 		return instance[propertyName]
 	end
 
-	local function unfilterResult(category, optional)
+	local function filterPropVal(result, propertyName, category) -- ? raw == nil thanks to SerializedDefaultAttributes; "can't get value" - due to WriteOnly tag;  "Invalid value for enum " - "StreamingPauseMode" (old games probably) Roexec
+		return result == nil
+			or result == "can't get value"
+			or type(result) == "string"
+				and (category == "Enum" or string_find(result, "Unable to get property " .. propertyName))
+	end
+
+	local function unfilterPropVal(category, optional)
 		return category ~= "Class" and not optional
 	end
 
