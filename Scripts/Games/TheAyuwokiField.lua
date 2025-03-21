@@ -80,6 +80,7 @@ local ESP_AyuwokiToggle = EspTab:CreateToggle({
 		espGui.StudsOffsetWorldSpace = Vector3.new(0, 4, 0)
 		espGui.Enabled = true
 		espGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+		espGui.Parent = ayuwoki
 
 		eg_ui_list = Instance.new("UIListLayout")
 		eg_ui_list.Name = "$list"
