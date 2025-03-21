@@ -1,10 +1,11 @@
 -- Версия и конфигурация
-local VERSION = "1.1"
+local VERSION = "1.12"
 local DEFAULT_CONFIG = {
     animationPack = "Levitation",
     includeToStarterAnimate = false,
     autoRestore = true,
-    notifyOnChange = true
+    notifyOnChange = true,
+    showUI = true
 }
 
 -- Сервисы
