@@ -33,6 +33,84 @@ local AnimationPacks = {
         swimidle = { SwimIdle = "http://www.roblox.com/asset/?id=10921139478" },
         walk = { WalkAnim = "http://www.roblox.com/asset/?id=10921140719" }
     },
+    ["Confident"] = {
+        climb = { ClimbAnim = "http://www.roblox.com/asset/?id=1069946257" },
+        fall = { FallAnim = "http://www.roblox.com/asset/?id=1069973677" },
+        idle = {
+            Animation1 = "http://www.roblox.com/asset/?id=1069977950",
+            Animation2 = "http://www.roblox.com/asset/?id=1069987858"
+        },
+        jump = { JumpAnim = "http://www.roblox.com/asset/?id=1069984524" },
+        run = { RunAnim = "http://www.roblox.com/asset/?id=1070001516" },
+        swim = { Swim = "http://www.roblox.com/asset/?id=1070009914" },
+        swimidle = { SwimIdle = "http://www.roblox.com/asset/?id=1070012133" },
+        walk = { WalkAnim = "http://www.roblox.com/asset/?id=1070017263" }
+    },
+    ["Popstar"] = {
+        climb = { ClimbAnim = "http://www.roblox.com/asset/?id=1213044953" },
+        fall = { FallAnim = "http://www.roblox.com/asset/?id=1212900995" },
+        idle = {
+            Animation1 = "http://www.roblox.com/asset/?id=1212900985",
+            Animation2 = "http://www.roblox.com/asset/?id=1212954651"
+        },
+        jump = { JumpAnim = "http://www.roblox.com/asset/?id=1212954642" },
+        run = { RunAnim = "http://www.roblox.com/asset/?id=1212980348" },
+        swim = { Swim = "http://www.roblox.com/asset/?id=1212852603" },
+        swimidle = { SwimIdle = "http://www.roblox.com/asset/?id=1212998578" },
+        walk = { WalkAnim = "http://www.roblox.com/asset/?id=1212980338" }
+    },
+    ["Patrol"] = {
+        climb = { ClimbAnim = "http://www.roblox.com/asset/?id=1148811837" },
+        fall = { FallAnim = "http://www.roblox.com/asset/?id=1148863382" },
+        idle = {
+            Animation1 = "http://www.roblox.com/asset/?id=1149612882",
+            Animation2 = "http://www.roblox.com/asset/?id=1150842221"
+        },
+        jump = { JumpAnim = "http://www.roblox.com/asset/?id=1150944216" },
+        run = { RunAnim = "http://www.roblox.com/asset/?id=1150967949" },
+        swim = { Swim = "http://www.roblox.com/asset/?id=1151204998" },
+        swimidle = { SwimIdle = "http://www.roblox.com/asset/?id=1151221899" },
+        walk = { WalkAnim = "http://www.roblox.com/asset/?id=1151231493" }
+    },
+    ["Sneaky"] = {
+        climb = { ClimbAnim = "http://www.roblox.com/asset/?id=1132461372" },
+        fall = { FallAnim = "http://www.roblox.com/asset/?id=1132469004" },
+        idle = {
+            Animation1 = "http://www.roblox.com/asset/?id=1132473842",
+            Animation2 = "http://www.roblox.com/asset/?id=1132477671"
+        },
+        jump = { JumpAnim = "http://www.roblox.com/asset/?id=1132489853" },
+        run = { RunAnim = "http://www.roblox.com/asset/?id=1132494274" },
+        swim = { Swim = "http://www.roblox.com/asset/?id=1132500520" },
+        swimidle = { SwimIdle = "http://www.roblox.com/asset/?id=1132506407" },
+        walk = { WalkAnim = "http://www.roblox.com/asset/?id=1132510133" }
+    },
+    ["Princess"] = {
+        climb = { ClimbAnim = "http://www.roblox.com/asset/?id=940996062" },
+        fall = { FallAnim = "http://www.roblox.com/asset/?id=941000007" },
+        idle = {
+            Animation1 = "http://www.roblox.com/asset/?id=941003647",
+            Animation2 = "http://www.roblox.com/asset/?id=941013098"
+        },
+        jump = { JumpAnim = "http://www.roblox.com/asset/?id=941008832" },
+        run = { RunAnim = "http://www.roblox.com/asset/?id=941015281" },
+        swim = { Swim = "http://www.roblox.com/asset/?id=941018893" },
+        swimidle = { SwimIdle = "http://www.roblox.com/asset/?id=941025398" },
+        walk = { WalkAnim = "http://www.roblox.com/asset/?id=941028902" }
+    },
+    ["Cowboy"] = {
+        climb = { ClimbAnim = "http://www.roblox.com/asset/?id=1014380606" },
+        fall = { FallAnim = "http://www.roblox.com/asset/?id=1014384571" },
+        idle = {
+            Animation1 = "http://www.roblox.com/asset/?id=1014390418",
+            Animation2 = "http://www.roblox.com/asset/?id=1014398616"
+        },
+        jump = { JumpAnim = "http://www.roblox.com/asset/?id=1014394726" },
+        run = { RunAnim = "http://www.roblox.com/asset/?id=1014401683" },
+        swim = { Swim = "http://www.roblox.com/asset/?id=1014406523" },
+        swimidle = { SwimIdle = "http://www.roblox.com/asset/?id=1014411816" },
+        walk = { WalkAnim = "http://www.roblox.com/asset/?id=1014421541" }
+    },
     ["Stylized Female"] = {
         climb = { ClimbAnim = "http://www.roblox.com/asset/?id=4708184253" },
         fall = { FallAnim = "http://www.roblox.com/asset/?id=4708186162" },
@@ -45,8 +123,7 @@ local AnimationPacks = {
         swim = { Swim = "http://www.roblox.com/asset/?id=4708189360" },
         swimidle = { SwimIdle = "http://www.roblox.com/asset/?id=4708190607" },
         walk = { WalkAnim = "http://www.roblox.com/asset/?id=4708193840" }
-    },
-    -- Добавьте новые наборы анимаций здесь
+    }
 }
 
 -- Утилиты
