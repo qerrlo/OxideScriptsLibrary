@@ -92,6 +92,7 @@ local ESP_AyuwokiToggle = EspTab:CreateToggle({
 		eg_ui_list.ItemLineAlignment = Enum.ItemLineAlignment.Automatic
 		eg_ui_list.VerticalAlignment = Enum.VerticalAlignment.Bottom
 		eg_ui_list.VerticalFlex = "None"
+		eg_ui_list.Parent = espGui
 
 		eg_name = Instance.new("TextLabel")
 		eg_name.Name = "name"
@@ -106,6 +107,7 @@ local ESP_AyuwokiToggle = EspTab:CreateToggle({
 		eg_name.TextTransparency = 0.2
 		eg_name.TextWrapped = true
 		eg_name.Visible = true		
+		eg_name.Parent = espGui
 
 		eg_studs = Instance.new("TextLabel")
 		eg_studs.Name = "studs"
@@ -120,6 +122,7 @@ local ESP_AyuwokiToggle = EspTab:CreateToggle({
 		eg_studs.TextTransparency = 0.2
 		eg_studs.TextWrapped = true
 		eg_studs.Visible = true
+		eg_studs.Parent = espGui
 	end,
 })
 
