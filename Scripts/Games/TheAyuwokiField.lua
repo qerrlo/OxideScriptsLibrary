@@ -1,7 +1,7 @@
 -- Author: @hinorium
 
 -- Game: The Ayuwoki Field
--- Version: 1.03b
+-- Version: 1.0
 
 if (game.PlaceId ~= 4010883325) then
 	return warn("this place don't expected")
