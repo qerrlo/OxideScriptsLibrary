@@ -4,22 +4,22 @@ local LocalPlayer = Players.LocalPlayer
 
 -- URLs и константы
 local url = {
-    AnimateReplacer = "https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/refs/heads/main/Scripts/AnimateReplacer/AnimateReplacer.luau",
-    InfiniteYield = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source",
-    UniversalSynSaveInstance = "https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/refs/heads/main/Scripts/UniversalSynSaveInstance/saveinstance.luau",
+    AnimateReplacer = "https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/main/Scripts/AnimateReplacer/AnimateReplacer.luau",
+    InfiniteYield = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source",
+    UniversalSynSaveInstance = "https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/main/Scripts/UniversalSynSaveInstance/saveinstance.luau",
     DexExplorer = "https://github.com/Hosvile/DEX-Explorer/releases/latest/download/main.lua",
     RemoteSpy = "https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua",
-    RemoteSpyMobile = "https://raw.githubusercontent.com/realredz/SimpleSpy/refs/heads/main/Mobile.lua",
+    RemoteSpyMobile = "https://raw.githubusercontent.com/realredz/SimpleSpy/main/Mobile.lua",
     DarkDex = "https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/BypassedDarkDexV3.lua",
-    DexExplorer_Keyless = "https://raw.githubusercontent.com/realredz/DEX-Explorer/refs/heads/main/Mobile.lua"
+    DexExplorer_Keyless = "https://raw.githubusercontent.com/realredz/DEX-Explorer/main/Mobile.lua"
 }
 
 -- Получение версий скриптов
 local function getVersions()
     local versions = {}
     local success, result = pcall(function()
-        versions.AnimateReplacer = HttpService:JSONDecode(game:HttpGet("https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/refs/heads/main/Scripts/AnimateReplacer/version")).Version
-        versions.InfiniteYield = HttpService:JSONDecode(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/version")).Version
+        versions.AnimateReplacer = HttpService:JSONDecode(game:HttpGet("https://raw.githubusercontent.com/qerrlo/OxideScriptsLibrary/main/Scripts/AnimateReplacer/version")).Version
+        versions.InfiniteYield = HttpService:JSONDecode(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version")).Version
     end)
     return versions
 end
@@ -46,12 +46,12 @@ local Window = Rayfield:CreateWindow({
     LoadingTitle = "Oxide Hub Loading...",
     LoadingSubtitle = "by qerrlo",
     ConfigurationSaving = {
-        Enabled = true,
+        Enabled = false,
         FolderName = "OxideHubConfig",
         FileName = "Settings"
     },
     Discord = {
-        Enabled = true,
+        Enabled = false,
         Invite = "YourDiscordInvite",
         RememberJoins = true
     },
@@ -164,20 +164,20 @@ UtilityTab:CreateButton({
 })
 
 -- Анти-чит обход
-local function setupAnticheatBypass()
-    local mt = getrawmetatable(game)
-    local old = mt.__namecall
-    setreadonly(mt, false)
-    mt.__namecall = newcclosure(function(...)
-        local args = {...}
-        local method = getnamecallmethod()
-        if method == "FireServer" and args[1].Name:match("AntiCheat") then
-            return
-        end
-        return old(...)
-    end)
-    setreadonly(mt, true)
-end
+-- local function setupAnticheatBypass()
+--     local mt = getrawmetatable(game)
+--     local old = mt.__namecall
+--     setreadonly(mt, false)
+--     mt.__namecall = newcclosure(function(...)
+--         local args = {...}
+--         local method = getnamecallmethod()
+--         if method == "FireServer" and args[1].Name:match("AntiCheat") then
+--             return
+--         end
+--         return old(...)
+--     end)
+--     setreadonly(mt, true)
+-- end
 
 -- Инициализация
-setupAnticheatBypass()
+-- setupAnticheatBypass()
