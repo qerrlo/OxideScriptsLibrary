@@ -54,14 +54,16 @@ local MainSection = EspTab:CreateSection("Main")
 local ayuwoki = nil
 ayuwoki = workspace:FindFirstChild("Ayuwoki")
 
+local esp, espGui, eg_ui_list, eg_name, eg_studs
+
 local ESP_AyuwokiToggle = EspTab:CreateToggle({
 	Name = "ESP Ayuwoki",
 	CurrentValue = false,
 	Flag = "ESP_Ayuwoki", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
 		if (ayuwoki:FindFirstChild("esp")) and (ayuwoki:FindFirstChild("espGui")) then ayuwoki.esp:Destroy() ayuwoki.espGui:Destroy() end
-		
-		local esp = Instance.new("Highlight")
+
+		esp = Instance.new("Highlight")
 		esp.Name = "esp"
 		esp.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
 		esp.FillColor = Color3.fromRGB(255, 0, 0)
@@ -69,8 +71,8 @@ local ESP_AyuwokiToggle = EspTab:CreateToggle({
 		esp.OutlineColor = Color3.fromRGB(155, 55, 55)
 		esp.OutlineTransparency = 0
 		esp.Parent = ayuwoki
-		
-		local espGui = Instance.new("BillboardGui")
+
+		espGui = Instance.new("BillboardGui")
 		espGui.Name = "espGui"
 		espGui.Adornee = ayuwoki.Head
 		espGui.AlwaysOnTop = true
@@ -78,8 +80,8 @@ local ESP_AyuwokiToggle = EspTab:CreateToggle({
 		espGui.StudsOffsetWorldSpace = Vector3.new(0, 4, 0)
 		espGui.Enabled = true
 		espGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-		
-		local eg_ui_list = Instance.new("UIListLayout")
+
+		eg_ui_list = Instance.new("UIListLayout")
 		eg_ui_list.Name = "$list"
 		eg_ui_list.FillDirection = Enum.FillDirection.Vertical
 		eg_ui_list.SortOrder = Enum.SortOrder.LayoutOrder
@@ -89,8 +91,8 @@ local ESP_AyuwokiToggle = EspTab:CreateToggle({
 		eg_ui_list.ItemLineAlignment = Enum.ItemLineAlignment.Automatic
 		eg_ui_list.VerticalAlignment = Enum.VerticalAlignment.Bottom
 		eg_ui_list.VerticalFlex = "None"
-		
-		local eg_name = Instance.new("TextLabel")
+
+		eg_name = Instance.new("TextLabel")
 		eg_name.Name = "name"
 		eg_name.AnchorPoint = Vector2.new(0.5, 0)
 		eg_name.BackgroundTransparency = 1
@@ -103,8 +105,8 @@ local ESP_AyuwokiToggle = EspTab:CreateToggle({
 		eg_name.TextTransparency = 0.2
 		eg_name.TextWrapped = true
 		eg_name.Visible = true		
-		
-		local eg_studs = Instance.new("TextLabel")
+
+		eg_studs = Instance.new("TextLabel")
 		eg_studs.Name = "studs"
 		eg_studs.AnchorPoint = Vector2.new(0.5, 0)
 		eg_studs.BackgroundTransparency = 1
@@ -119,6 +121,11 @@ local ESP_AyuwokiToggle = EspTab:CreateToggle({
 		eg_studs.Visible = true
 	end,
 })
+
+render_connection = RunService.RenderStepped:Connect(function()
+	eg_name.Text = (ayuwoki and `name: {ayuwoki.Name}`) or `name: n/a`
+	eg_studs.Text = (ayuwoki and `studs: {(ayuwoki.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude}`) or `studs: n/a`
+end)
 
 workspace.ChildAdded:Connect(function(child)
 	if (child.Name == "Ayuwoki") then
