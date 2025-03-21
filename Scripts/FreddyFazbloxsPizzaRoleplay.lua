@@ -97,9 +97,9 @@ local PlayerDataSection = Tab:CreateSection("Player Data")
 local InfSkins = Tab:CreateButton({
     Name = "Infinite Skins",
     Callback = function()
-        game:GetService("Players").LocalPlayer.PlayerData.Skin.Value = math.huge
-        game:GetService("Players").LocalPlayer.PlayerData.Skin:GetPropertyChangedSignal("Value"):Connect(function()
-            game:GetService("Players").LocalPlayer.PlayerData.Skin.Value = math.huge      
+        PlayerData.Skin.Value = math.huge
+        PlayerData.Skin:GetPropertyChangedSignal("Value"):Connect(function()
+            PlayerData.Skin.Value = math.huge      
         end)
     end,
 })
@@ -107,9 +107,9 @@ local InfSkins = Tab:CreateButton({
 local InfTickets = Tab:CreateButton({
     Name = "Infinite Tickets",
     Callback = function()
-        game:GetService("Players").LocalPlayer.PlayerData.Tickets.Value = math.huge
-        game:GetService("Players").LocalPlayer.PlayerData.Tickets:GetPropertyChangedSignal("Value"):Connect(function()
-            game:GetService("Players").LocalPlayer.PlayerData.Tickets.Value = math.huge
+        PlayerData.Tickets.Value = math.huge
+        PlayerData.Tickets:GetPropertyChangedSignal("Value"):Connect(function()
+            PlayerData.Tickets.Value = math.huge
         end)
     end,
 })
@@ -117,9 +117,9 @@ local InfTickets = Tab:CreateButton({
 local InfTokens = Tab:CreateButton({
     Name = "Infinite Tokens",
     Callback = function()
-        game:GetService("Players").LocalPlayer.PlayerData.Tokens.Value = math.huge
-        game:GetService("Players").LocalPlayer.PlayerData.Tokens:GetPropertyChangedSignal("Value"):Connect(function()
-            game:GetService("Players").LocalPlayer.PlayerData.Tokens.Value = math.huge
+        PlayerData.Tokens.Value = math.huge
+        PlayerData.Tokens:GetPropertyChangedSignal("Value"):Connect(function()
+            PlayerData.Tokens.Value = math.huge
         end)
     end,
 })
@@ -130,55 +130,55 @@ local TogglesSection = TogglesTab:CreateSection("Toggles")
 -- Создание переключателей
 local FFEventCompletedToggle = TogglesTab:CreateToggle({
     Name = "Toggle [FFEventCompleted]",
-    CurrentValue = game:GetService("Players").LocalPlayer.PlayerData.FFEventCompleted.Value,
+    CurrentValue = PlayerData.FFEventCompleted.Value,
     Flag = "FFEventCompletedToggle",
     Callback = function(Value)
-        game:GetService("Players").LocalPlayer.PlayerData.FFEventCompleted.Value = Value
+        PlayerData.FFEventCompleted.Value = Value
     end,
 })
 
 local BonnieToggle = TogglesTab:CreateToggle({
     Name = "Get [Bonnie]",
-    CurrentValue = game:GetService("Players").LocalPlayer.PlayerData.BonniePurchased.Value,
+    CurrentValue = PlayerData.BonniePurchased.Value,
     Flag = "BonnieToggle",
     Callback = function(Value)
-        game:GetService("Players").LocalPlayer.PlayerData.BonniePurchased.Value = Value
+        PlayerData.BonniePurchased.Value = Value
     end,
 })
 
 local ChicaToggle = TogglesTab:CreateToggle({
     Name = "Get [Chica]",
-    CurrentValue = game:GetService("Players").LocalPlayer.PlayerData.ChicaPurchased.Value,
+    CurrentValue = PlayerData.ChicaPurchased.Value,
     Flag = "ChicaToggle",
     Callback = function(Value)
-        game:GetService("Players").LocalPlayer.PlayerData.ChicaPurchased.Value = Value
+        PlayerData.ChicaPurchased.Value = Value
     end,
 })
 
 local FoxyToggle = TogglesTab:CreateToggle({
     Name = "Get [Foxy]",
-    CurrentValue = game:GetService("Players").LocalPlayer.PlayerData.FoxyPurchased,
+    CurrentValue = PlayerData.FoxyPurchased,
     Flag = "FoxyToggle",
     Callback = function(Value)
-        game:GetService("Players").LocalPlayer.PlayerData.FoxyPurchased.Value = Value
+        PlayerData.FoxyPurchased.Value = Value
     end,
 })
 
 local FreddyToggle = TogglesTab:CreateToggle({
     Name = "Get [Freddy]",
-    CurrentValue = game:GetService("Players").LocalPlayer.PlayerData.FreddyPurchased,
+    CurrentValue = PlayerData.FreddyPurchased,
     Flag = "FreddyToggle",
     Callback = function(Value)
-        game:GetService("Players").LocalPlayer.PlayerData.FreddyPurchased.Value = Value
+        PlayerData.FreddyPurchased.Value = Value
     end,
 })
 
 local GFreddyToggle = TogglesTab:CreateToggle({
     Name = "Get [Golden Freddy]",
-    CurrentValue = game:GetService("Players").LocalPlayer.PlayerData.GFreddyPurchased,
+    CurrentValue = PlayerData.GFreddyPurchased,
     Flag = "GFreddyToggle",
     Callback = function(Value)
-        game:GetService("Players").LocalPlayer.PlayerData.GFreddyPurchased.Value = Value
+        PlayerData.GFreddyPurchased.Value = Value
     end,
 })
 
@@ -190,7 +190,7 @@ local AllSkinsToggle = TogglesTab:CreateToggle({
     CurrentValue = false,
     Flag = "AllSkinsToggle",
     Callback = function(Value)
-        for _, v in pairs(game:GetService("Players").LocalPlayer.PlayerData:GetDescendants()) do
+        for _, v in pairs(PlayerData:GetDescendants()) do
             if v:IsA("BoolValue") and string.match(v.Name, "Skin") then
                 v.Value = Value
             end
@@ -238,7 +238,7 @@ local CustomNameInput = OtherTab:CreateInput({
             [2] = false
         }
 
-        game:GetService("Players").LocalPlayer.Character.NameEvent:FireServer(unpack(args))
+        LocalPlayer.Character.NameEvent:FireServer(unpack(args))
    end,
 })
 
@@ -254,6 +254,6 @@ local CustomDescriptionInput = OtherTab:CreateInput({
             [2] = Text
         }
 
-        game:GetService("Players").LocalPlayer.Character.NameEvent:FireServer(unpack(args))
+        LocalPlayer.Character.NameEvent:FireServer(unpack(args))
    end,
 })
