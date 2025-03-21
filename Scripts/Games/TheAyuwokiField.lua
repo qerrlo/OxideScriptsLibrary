@@ -1,9 +1,10 @@
 -- Author: @hinorium
 
 -- Game: The Ayuwoki Field
--- Version: 1.0
+-- Version: 1.02
 
 if (game.PlaceId ~= 4010883325) then
+	game:GetService("TeleportService"):Teleport(4010883325, game.Players.LocalPlayer)
 	return warn("this place don't expected")
 end
 
