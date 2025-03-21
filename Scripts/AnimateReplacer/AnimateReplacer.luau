@@ -274,26 +274,147 @@ end
 -- Создание UI для управления анимациями (опционально)
 local function CreateAnimationUI()
     local ScreenGui = Instance.new("ScreenGui")
-    local Frame = Instance.new("Frame")
+    local MainFrame = Instance.new("Frame")
+    local Title = Instance.new("TextLabel")
+    local ScrollingFrame = Instance.new("ScrollingFrame")
     local UIListLayout = Instance.new("UIListLayout")
-    
+    local UICorner = Instance.new("UICorner")
+    local UIPadding = Instance.new("UIPadding")
+
+    -- Main Frame Setup
     ScreenGui.Parent = Player:WaitForChild("PlayerGui")
-    Frame.Size = UDim2.new(0, 200, 0, 300)
-    Frame.Position = UDim2.new(0.85, 0, 0.5, 0)
-    Frame.BackgroundTransparency = 0.5
-    Frame.Parent = ScreenGui
+    ScreenGui.ResetOnSpawn = false
+
+    MainFrame.Name = "AnimationsMenu"
+    MainFrame.Size = UDim2.new(0, 220, 0, 320)
+    MainFrame.Position = UDim2.new(0.85, 0, 0.5, -160)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+    MainFrame.BorderSizePixel = 0
+    MainFrame.Parent = ScreenGui
+
+    -- Title Setup
+    Title.Size = UDim2.new(1, 0, 0, 40)
+    Title.Position = UDim2.new(0, 0, 0, 0)
+    Title.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.Text = "Animation Packs"
+    Title.TextSize = 18
+    Title.Font = Enum.Font.GothamBold
+    Title.Parent = MainFrame
+
+    -- Scrolling Frame Setup
+    ScrollingFrame.Size = UDim2.new(1, -20, 1, -50)
+    ScrollingFrame.Position = UDim2.new(0, 10, 0, 45)
+    ScrollingFrame.BackgroundTransparency = 1
+    ScrollingFrame.BorderSizePixel = 0
+    ScrollingFrame.ScrollBarThickness = 4
+    ScrollingFrame.Parent = MainFrame
+
+    -- UI Layout Setup
+    UIListLayout.Parent = ScrollingFrame
+    UIListLayout.Padding = UDim.new(0, 5)
+    UIListLayout.SortOrder = Enum.SortOrder.Name
+
+    -- Add Corners
+    UICorner.CornerRadius = UDim.new(0, 8)
+    UICorner.Parent = MainFrame
     
-    UIListLayout.Parent = Frame
-    
+    local TitleCorner = UICorner:Clone()
+    TitleCorner.Parent = Title
+
+    -- Add Padding
+    UIPadding.Parent = ScrollingFrame
+    UIPadding.PaddingTop = UDim.new(0, 5)
+
+    -- Create Buttons
     for packName, _ in pairs(AnimationPacks) do
-        local button = Instance.new("TextButton")
-        button.Size = UDim2.new(1, 0, 0, 30)
-        button.Text = packName
-        button.Parent = Frame
-        button.MouseButton1Click:Connect(function()
+        local ButtonFrame = Instance.new("Frame")
+        ButtonFrame.Size = UDim2.new(1, 0, 0, 35)
+        ButtonFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
+        ButtonFrame.BorderSizePixel = 0
+        ButtonFrame.Parent = ScrollingFrame
+
+        local Button = Instance.new("TextButton")
+        Button.Size = UDim2.new(1, 0, 1, 0)
+        Button.BackgroundTransparency = 1
+        Button.Text = packName
+        Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Button.TextSize = 14
+        Button.Font = Enum.Font.Gotham
+        Button.Parent = ButtonFrame
+
+        local ButtonCorner = UICorner:Clone()
+        ButtonCorner.Parent = ButtonFrame
+
+        -- Hover Effect
+        Button.MouseEnter:Connect(function()
+            game:GetService("TweenService"):Create(ButtonFrame, 
+                TweenInfo.new(0.2), 
+                {BackgroundColor3 = Color3.fromRGB(60, 60, 65)}
+            ):Play()
+        end)
+
+        Button.MouseLeave:Connect(function()
+            game:GetService("TweenService"):Create(ButtonFrame, 
+                TweenInfo.new(0.2), 
+                {BackgroundColor3 = Color3.fromRGB(45, 45, 50)}
+            ):Play()
+        end)
+
+        -- Click Effect
+        Button.MouseButton1Down:Connect(function()
+            ButtonFrame.BackgroundColor3 = Color3.fromRGB(70, 70, 75)
+        end)
+
+        Button.MouseButton1Up:Connect(function()
+            ButtonFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
             animator:ReplaceAnimations(packName)
         end)
     end
+
+    -- Update ScrollingFrame Canvas Size
+    UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
+    end)
+
+    -- Make Frame Draggable
+    local UserInputService = game:GetService("UserInputService")
+    local dragging
+    local dragInput
+    local dragStart
+    local startPos
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+            startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+
+    Title.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = MainFrame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    Title.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            update(input)
+        end
+    end)
 end
 
 -- Запуск
