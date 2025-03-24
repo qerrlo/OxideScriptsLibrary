@@ -1,7 +1,7 @@
 -- Author: @hinorium
 
 -- Game: Zombie Survival Garry's Mod [Old]
--- Version: 1.03a
+-- Version: 1.03b
 
 if (game.PlaceId ~= 10149471313) then
 	return warn("this place don't expected")
@@ -39,14 +39,14 @@ local VoiceChatService = game:GetService("VoiceChatService")
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.0.3a"
+local CurrentVersion = "1.0.3b"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
 	Name = "Zombie Survival Garry's Mod [Old]",
 	Icon = "github",
-	LoadingTitle = "v" .. CurrentVersion,
+	LoadingTitle = "ZSGM [Old] - v" .. CurrentVersion,
 	LoadingSubtitle = "by hinorium",
 	ConfigurationSaving = {
 		Enabled = false,
@@ -81,7 +81,7 @@ function notify(title: string?, content: string?, duration: number?): rayfield_n
 	})
 end
 
-local function fire_remote(remoteName: string, args: {any})
+function fire_remote(remoteName: string, args: {any})
 	local success, remote = pcall(function()
 		return ReplicatedStorage:WaitForChild("Remotes", 10):WaitForChild(remoteName, 10)
 	end)
@@ -103,11 +103,47 @@ local function fire_remote(remoteName: string, args: {any})
 	return true
 end
 
+local MainTab = Window:CreateTab("Main", "code-xml")
+
+local MiscToggles = MainTab:CreateSection("Buttons")
+
+local MiscButtons = {
+	DestroySigils = MainTab:CreateButton({
+		Name = "Destroy All Sigil's",
+		Callback = function()
+			local function destroySigil(sigil)
+				local args = {
+					game:GetService("Players").LocalPlayer.Character.Zombie,
+					sigil,
+					sigil.CFrame,
+					55
+				}
+
+				fire_remote("MeleeKnockback", args)
+			end
+
+			local sigils = workspace:FindFirstChild("Sigils")
+			if not sigils then return end
+
+			for _, sigil in ipairs(sigils:GetChildren()) do
+				if sigil.Name == "Sigil" then
+					task.spawn(function()
+						destroySigil(sigil)
+						task.wait(0.1)
+					end)
+				end
+			end
+
+			notify('Info', 'Sigils will be damaged')
+		end,
+	}),
+}
+
 local MiscTab = Window:CreateTab("Misc", "folder-cog")
 
-local MainSection = MiscTab:CreateSection("Toggles")
+local MiscToggles = MiscTab:CreateSection("Toggles")
 
-local Toggles = {
+local MiscToggles = {
 	Bypass_OutsideGameArea = MiscTab:CreateToggle({
 		Name = "[AC] - Outside GameArea - Bypass",
 		CurrentValue = false,
@@ -275,9 +311,7 @@ local Toggles = {
 		Flag = "__BYPASS_Noclip",
 		Callback = function(Value)
 			_G.NoclipBypassEnabled = Value
-
-			local Players = game:GetService("Players")
-			local RunService = game:GetService("RunService")
+			
 			local LocalPlayer = Players.LocalPlayer
 			local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
@@ -393,9 +427,9 @@ local Toggles = {
 	}),
 }
 
-local Section = MiscTab:CreateSection("Buttons")
+local MiscButtons = MiscTab:CreateSection("Buttons")
 
-local Buttons = {
+local MiscButtons = {
 	Antiidle = MiscTab:CreateButton({
 		Name = "Anti-Idle",
 		Callback = function()
