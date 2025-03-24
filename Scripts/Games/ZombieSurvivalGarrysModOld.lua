@@ -1,7 +1,7 @@
 -- Author: @hinorium
 
 -- Game: Zombie Survival Garry's Mod [Old]
--- Version: 1.03
+-- Version: 1.03a
 
 if (game.PlaceId ~= 10149471313) then
 	return warn("this place don't expected")
@@ -36,15 +36,17 @@ local TextChatService = game:GetService("TextChatService")
 local CaptureService = game:GetService("CaptureService")
 local VoiceChatService = game:GetService("VoiceChatService")
 
-PlaceId, JobId = game.PlaceId, game.JobId
+local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
+
+local CurrentVersion = "1.0.3a"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
 	Name = "Zombie Survival Garry's Mod [Old]",
 	Icon = "github",
-	LoadingTitle = "UI Loading...",
+	LoadingTitle = "v" .. CurrentVersion,
 	LoadingSubtitle = "by hinorium",
 	ConfigurationSaving = {
 		Enabled = false,
@@ -279,24 +281,24 @@ local Toggles = {
 			local LocalPlayer = Players.LocalPlayer
 			local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
+			local function isZombie()
+				return LocalPlayer and LocalPlayer.Team.Name == "Zombies" or LocalPlayer.TeamColor == BrickColor.new("Lime green")
+			end
+
 			local function isAlive()
 				return Character and Character.Parent and Character:FindFirstChild("HumanoidRootPart") 
 					and Character:FindFirstChild("Humanoid") and Character.Humanoid.Health > 0
 			end
+
+			local lastPosition = nil
+			local failedAttempts = 0
+			local lastCheckTime = tick()
 
 			local function setupBypass()
 				if not isAlive() then return end
 
 				local humanoidRootPart = Character.HumanoidRootPart
 				local humanoid = Character.Humanoid
-
-				if not humanoidRootPart:GetAttribute("OriginalProperties") then
-					humanoidRootPart:SetAttribute("OriginalProperties", HttpService:JSONEncode({
-						Velocity = humanoidRootPart.Velocity,
-						CanCollide = humanoidRootPart.CanCollide,
-						AssemblyLinearVelocity = humanoidRootPart.AssemblyLinearVelocity
-					}))
-				end
 
 				if _G.NoclipBypassEnabled then
 					if not _G.NoclipConnection then
@@ -309,18 +311,57 @@ local Toggles = {
 								return
 							end
 
-							humanoidRootPart.Velocity = humanoidRootPart.Velocity * 0.95
+							local currentTime = tick()
+							if currentTime - lastCheckTime > 0.1 then
+								local barricadesModel = workspace:FindFirstChild("Barricades") and workspace.Barricades:FindFirstChild("Model")
+								local nearBarricade = false
 
-							local currentVelocity = humanoidRootPart.AssemblyLinearVelocity
-							humanoidRootPart.AssemblyLinearVelocity = Vector3.new(
-								math.clamp(currentVelocity.X, -16, 16),
-								math.clamp(currentVelocity.Y, -16, 16),
-								math.clamp(currentVelocity.Z, -16, 16)
-							)
+								if barricadesModel then
+									for _, barricade in ipairs(barricadesModel:GetChildren()) do
+										if barricade:IsA("MeshPart") and barricade.Name == "Barricade" then
+											local distance = (humanoidRootPart.Position - barricade.Position).Magnitude
+											if distance < 4 then
+												nearBarricade = true
+												break
+											end
+										end
+									end
+								end
 
-							if humanoidRootPart.AssemblyLinearVelocity.Magnitude > 45 then
-								humanoidRootPart.AssemblyLinearVelocity = 
-									humanoidRootPart.AssemblyLinearVelocity.Unit * 40
+								if not nearBarricade then
+									lastPosition = humanoidRootPart.CFrame
+									failedAttempts = 0
+								end
+								lastCheckTime = currentTime
+							end
+
+							if isZombie() then
+								local barricadesModel = workspace:FindFirstChild("Barricades") and workspace.Barricades:FindFirstChild("Model")
+								if barricadesModel then
+									for _, barricade in ipairs(barricadesModel:GetChildren()) do
+										if barricade:IsA("MeshPart") and barricade.Name == "Barricade" then
+											local distance = (humanoidRootPart.Position - barricade.Position).Magnitude
+											if distance < 2.5 then
+												failedAttempts = failedAttempts + 1
+
+												if failedAttempts >= 2 then
+													if lastPosition then
+														humanoidRootPart.CFrame = lastPosition
+														failedAttempts = 0
+														task.wait(0.1)
+													end
+												end
+
+												humanoidRootPart.Velocity = humanoidRootPart.Velocity * 0.7
+												humanoidRootPart.AssemblyLinearVelocity = Vector3.new(
+													math.clamp(humanoidRootPart.AssemblyLinearVelocity.X, -10, 10),
+													math.clamp(humanoidRootPart.AssemblyLinearVelocity.Y, -10, 10),
+													math.clamp(humanoidRootPart.AssemblyLinearVelocity.Z, -10, 10)
+												)
+											end
+										end
+									end
+								end
 							end
 						end)
 					end
@@ -329,14 +370,8 @@ local Toggles = {
 						_G.NoclipConnection:Disconnect()
 						_G.NoclipConnection = nil
 					end
-
-					local originalProps = humanoidRootPart:GetAttribute("OriginalProperties")
-					if originalProps then
-						local props = HttpService:JSONDecode(originalProps)
-						humanoidRootPart.Velocity = props.Velocity
-						humanoidRootPart.CanCollide = props.CanCollide
-						humanoidRootPart.AssemblyLinearVelocity = props.AssemblyLinearVelocity
-					end
+					lastPosition = nil
+					failedAttempts = 0
 				end
 			end
 
@@ -346,6 +381,8 @@ local Toggles = {
 				_G.CharacterAddedConnection = LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 					Character = newCharacter
 					task.wait(0.5)
+					lastPosition = nil
+					failedAttempts = 0
 					setupBypass()
 				end)
 			elseif not _G.NoclipBypassEnabled and _G.CharacterAddedConnection then
