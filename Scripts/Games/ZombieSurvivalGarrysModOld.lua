@@ -215,7 +215,7 @@ local MiscButtons = {
 			local attackCount = 0
 			local maxAttacks = 30
 
-			for i = 1, 3 do
+			for i = 1, #barricades do
 				task.spawn(function()
 					while attackCount < maxAttacks do
 						for _, barricade in ipairs(barricades) do
