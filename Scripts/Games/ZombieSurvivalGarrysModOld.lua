@@ -1,7 +1,7 @@
 -- Author: @hinorium
 
 -- Game: Zombie Survival Garry's Mod [Old]
--- Version: 1.03b
+-- Version: 1.03c
 
 if (game.PlaceId ~= 10149471313) then
 	return warn("this place don't expected")
@@ -39,7 +39,7 @@ local VoiceChatService = game:GetService("VoiceChatService")
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.0.3b"
+local CurrentVersion = "1.0.3c"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -109,17 +109,30 @@ local MiscToggles = MainTab:CreateSection("Buttons")
 
 local MiscButtons = {
 	DestroySigils = MainTab:CreateButton({
-		Name = "Destroy All Sigil's",
+		Name = "Destroy All Sigil's [Only Zombie]",
 		Callback = function()
 			local function destroySigil(sigil)
-				local args = {
-					game:GetService("Players").LocalPlayer.Character.Zombie,
-					sigil,
-					sigil.CFrame,
-					55
-				}
+				local maxHP = sigil:GetAttribute("MaxHP") or 1000
+				local currentHP = sigil:GetAttribute("HP") or 1000
+				local damagePerHit = 55
+				local hitsNeeded = math.ceil(currentHP / damagePerHit)
 
-				fire_remote("MeleeKnockback", args)
+				for i = 1, hitsNeeded do
+					local args = {
+						Players.LocalPlayer.Character.Zombie,
+						sigil,
+						sigil.CFrame,
+						55
+					}
+
+					fire_remote("MeleeKnockback", args)
+					task.wait(0.1)
+
+					local newHP = sigil:GetAttribute("HP")
+					if newHP and newHP <= 0 then
+						break
+					end
+				end
 			end
 
 			local sigils = workspace:FindFirstChild("Sigils")
@@ -129,12 +142,12 @@ local MiscButtons = {
 				if sigil.Name == "Sigil" then
 					task.spawn(function()
 						destroySigil(sigil)
-						task.wait(0.1)
+						task.wait(0.2)
 					end)
 				end
 			end
 
-			notify('Info', 'Sigils will be damaged')
+			notify('Info', 'Destroying sigils based on their HP')
 		end,
 	}),
 }
