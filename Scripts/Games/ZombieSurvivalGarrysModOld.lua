@@ -1,7 +1,7 @@
 -- Author: @hinorium
 
 -- Game: Zombie Survival Garry's Mod [Old]
--- Version: 1.02a
+-- Version: 1.02b
 
 if (game.PlaceId ~= 10149471313) then
 	return warn("this place don't expected")
@@ -291,7 +291,7 @@ local Buttons = {
 					VirtualUser:ClickButton2(Vector2.new())
 				end)
 			end
-			if not (args[1] and tostring(args[1]) == 'nonotify') then notify('Anti Idle','Anti idle is enabled') end
+			notify('Anti Idle','Anti idle is enabled')
 		end,
 	}),
 	ClientAntiKick = MiscTab:CreateButton({
