@@ -1,7 +1,7 @@
 -- Author: @hinorium
 
 -- Game: Zombie Survival Garry's Mod [Old]
--- Version: 1.02b
+-- Version: 1.03
 
 if (game.PlaceId ~= 10149471313) then
 	return warn("this place don't expected")
@@ -264,6 +264,93 @@ local Toggles = {
 					_G.BarricadesChildWatcher:Disconnect()
 					_G.BarricadesChildWatcher = nil
 				end
+			end
+		end,
+	}),
+	Bypass_Noclip = MiscTab:CreateToggle({
+		Name = "[AC] - Noclip Exploiting - Bypass (Testing)",
+		CurrentValue = false,
+		Flag = "__BYPASS_Noclip",
+		Callback = function(Value)
+			_G.NoclipBypassEnabled = Value
+
+			local Players = game:GetService("Players")
+			local RunService = game:GetService("RunService")
+			local LocalPlayer = Players.LocalPlayer
+			local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
+			local function isAlive()
+				return Character and Character.Parent and Character:FindFirstChild("HumanoidRootPart") 
+					and Character:FindFirstChild("Humanoid") and Character.Humanoid.Health > 0
+			end
+
+			local function setupBypass()
+				if not isAlive() then return end
+
+				local humanoidRootPart = Character.HumanoidRootPart
+				local humanoid = Character.Humanoid
+
+				if not humanoidRootPart:GetAttribute("OriginalProperties") then
+					humanoidRootPart:SetAttribute("OriginalProperties", HttpService:JSONEncode({
+						Velocity = humanoidRootPart.Velocity,
+						CanCollide = humanoidRootPart.CanCollide,
+						AssemblyLinearVelocity = humanoidRootPart.AssemblyLinearVelocity
+					}))
+				end
+
+				if _G.NoclipBypassEnabled then
+					if not _G.NoclipConnection then
+						_G.NoclipConnection = RunService.Heartbeat:Connect(function()
+							if not isAlive() or not _G.NoclipBypassEnabled then
+								if _G.NoclipConnection then
+									_G.NoclipConnection:Disconnect()
+									_G.NoclipConnection = nil
+								end
+								return
+							end
+
+							humanoidRootPart.Velocity = humanoidRootPart.Velocity * 0.95
+
+							local currentVelocity = humanoidRootPart.AssemblyLinearVelocity
+							humanoidRootPart.AssemblyLinearVelocity = Vector3.new(
+								math.clamp(currentVelocity.X, -16, 16),
+								math.clamp(currentVelocity.Y, -16, 16),
+								math.clamp(currentVelocity.Z, -16, 16)
+							)
+
+							if humanoidRootPart.AssemblyLinearVelocity.Magnitude > 45 then
+								humanoidRootPart.AssemblyLinearVelocity = 
+									humanoidRootPart.AssemblyLinearVelocity.Unit * 40
+							end
+						end)
+					end
+				else
+					if _G.NoclipConnection then
+						_G.NoclipConnection:Disconnect()
+						_G.NoclipConnection = nil
+					end
+
+					local originalProps = humanoidRootPart:GetAttribute("OriginalProperties")
+					if originalProps then
+						local props = HttpService:JSONDecode(originalProps)
+						humanoidRootPart.Velocity = props.Velocity
+						humanoidRootPart.CanCollide = props.CanCollide
+						humanoidRootPart.AssemblyLinearVelocity = props.AssemblyLinearVelocity
+					end
+				end
+			end
+
+			setupBypass()
+
+			if _G.NoclipBypassEnabled and not _G.CharacterAddedConnection then
+				_G.CharacterAddedConnection = LocalPlayer.CharacterAdded:Connect(function(newCharacter)
+					Character = newCharacter
+					task.wait(0.5)
+					setupBypass()
+				end)
+			elseif not _G.NoclipBypassEnabled and _G.CharacterAddedConnection then
+				_G.CharacterAddedConnection:Disconnect()
+				_G.CharacterAddedConnection = nil
 			end
 		end,
 	}),
