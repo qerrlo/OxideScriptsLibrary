@@ -1,7 +1,7 @@
 -- Author: @hinorium
 
 -- Game: Zombie Survival Garry's Mod [Old]
--- Version: 1.05b
+-- Version: 1.0.6
 
 if (game.PlaceId ~= 10149471313) then
 	return warn("this place don't expected")
@@ -39,7 +39,7 @@ local VoiceChatService = game:GetService("VoiceChatService")
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.0.5b"
+local CurrentVersion = "1.0.6"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -104,145 +104,6 @@ function fire_remote(remoteName: string, args: {any})
 end
 
 local MainTab = Window:CreateTab("Main", "code-xml")
-
-local MainTogglesSection = MainTab:CreateSection("Toggles")
-
-local MainToggles = {
-	ESP = MainTab:CreateToggle({
-		Name = "ESP",
-		CurrentValue = false,
-		Flag = "__Toggle_ESP",
-		Callback = function(Value)
-			local Players = game:GetService("Players")
-			local RunService = game:GetService("RunService")
-			local LocalPlayer = Players.LocalPlayer
-
-			local connections = {}
-			local espObjects = {}
-
-			local function cleanupESP()
-				for _, connection in pairs(connections) do
-					if connection then connection:Disconnect() end
-				end
-				connections = {}
-
-				for _, objects in pairs(espObjects) do
-					for _, object in pairs(objects) do
-						if object then object:Destroy() end
-					end
-				end
-				espObjects = {}
-			end
-
-			local function createESP(character)
-				if not character then return end
-				local humanoid = character:WaitForChild("Humanoid")
-				local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-				if not humanoid or not humanoidRootPart then return end
-
-				local player = Players:GetPlayerFromCharacter(character)
-				if not player then return end
-
-				espObjects[player.UserId] = espObjects[player.UserId] or {}
-				local playerObjects = espObjects[player.UserId]
-
-				local highlight = Instance.new("Highlight")
-				highlight.FillTransparency = 0.5
-				highlight.OutlineTransparency = 0
-				highlight.FillColor = Color3.fromRGB(255, 0, 0)
-				highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-				highlight.Adornee = character
-				highlight.Parent = character
-				playerObjects.highlight = highlight
-
-				local billboardGui = Instance.new("BillboardGui")
-				billboardGui.Size = UDim2.new(0, 100, 0, 40)
-				billboardGui.StudsOffset = Vector3.new(0, 3, 0)
-				billboardGui.AlwaysOnTop = true
-				billboardGui.Parent = humanoidRootPart
-				playerObjects.billboardGui = billboardGui
-
-				local healthFrame = Instance.new("Frame")
-				healthFrame.Size = UDim2.new(1, 0, 0.3, 0)
-				healthFrame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-				healthFrame.BorderSizePixel = 0
-				healthFrame.Parent = billboardGui
-				playerObjects.healthFrame = healthFrame
-
-				local nameLabel = Instance.new("TextLabel")
-				nameLabel.Size = UDim2.new(1, 0, 0.7, 0)
-				nameLabel.Position = UDim2.new(0, 0, 0.3, 0)
-				nameLabel.BackgroundTransparency = 1
-				nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-				nameLabel.TextScaled = true
-				nameLabel.Parent = billboardGui
-				playerObjects.nameLabel = nameLabel
-
-				local updateConnection = RunService.RenderStepped:Connect(function()
-					if not character:IsDescendantOf(workspace) or not humanoid.Parent then
-						if playerObjects.updateConnection then
-							playerObjects.updateConnection:Disconnect()
-						end
-						return
-					end
-
-					if player.Team == Teams.Zombies then
-						highlight.FillColor = Color3.fromRGB(0, 255, 0)
-					else
-						highlight.FillColor = Color3.fromRGB(255, 0, 0)
-					end
-
-					healthFrame.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 0.3, 0)
-					nameLabel.Text = player.Name .. "\n" .. math.floor(humanoid.Health) .. "/" .. humanoid.MaxHealth
-
-					local distance = (LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")) and 
-						(LocalPlayer.Character.HumanoidRootPart.Position - humanoidRootPart.Position).Magnitude or 0
-					local transparency = math.clamp(distance / 100, 0, 0.8)
-					highlight.FillTransparency = transparency
-					highlight.OutlineTransparency = transparency
-					billboardGui.Enabled = distance < 100
-				end)
-				playerObjects.updateConnection = updateConnection
-				table.insert(connections, updateConnection)
-
-				local deathConnection = humanoid.Died:Connect(function()
-					if playerObjects.updateConnection then
-						playerObjects.updateConnection:Disconnect()
-					end
-					for _, object in pairs(playerObjects) do
-						if typeof(object) == "Instance" then
-							object:Destroy()
-						end
-					end
-					espObjects[player.UserId] = nil
-				end)
-				table.insert(connections, deathConnection)
-			end
-
-			if Value then
-				for _, player in ipairs(Players:GetPlayers()) do
-					if player ~= LocalPlayer then
-						if player.Character then
-							createESP(player.Character)
-						end
-						local connection = player.CharacterAdded:Connect(createESP)
-						table.insert(connections, connection)
-					end
-				end
-
-				local playerAddedConnection = Players.PlayerAdded:Connect(function(player)
-					if player ~= LocalPlayer then
-						local connection = player.CharacterAdded:Connect(createESP)
-						table.insert(connections, connection)
-					end
-				end)
-				table.insert(connections, playerAddedConnection)
-			else
-				cleanupESP()
-			end
-		end,
-	})
-}
 
 local MaubButtonsSection = MainTab:CreateSection("Buttons")
 
@@ -375,6 +236,143 @@ local MainButtons = {
 			notify('Info', 'All barricades destroyed!')
 		end,
 	}),
+}
+
+local MainTogglesSection = MainTab:CreateSection("Toggles")
+
+local MainToggles = {
+	ESP = MainTab:CreateToggle({
+		Name = "ESP",
+		CurrentValue = false,
+		Flag = "__Toggle_ESP",
+		Callback = function(Value)
+			local LocalPlayer = Players.LocalPlayer
+
+			local connections = {}
+			local espObjects = {}
+
+			local function cleanupESP()
+				for _, connection in pairs(connections) do
+					if connection then connection:Disconnect() end
+				end
+				connections = {}
+
+				for _, objects in pairs(espObjects) do
+					for _, object in pairs(objects) do
+						if object then object:Destroy() end
+					end
+				end
+				espObjects = {}
+			end
+
+			local function createESP(character)
+				if not character then return end
+				local humanoid = character:WaitForChild("Humanoid")
+				local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+				if not humanoid or not humanoidRootPart then return end
+
+				local player = Players:GetPlayerFromCharacter(character)
+				if not player then return end
+
+				espObjects[player.UserId] = espObjects[player.UserId] or {}
+				local playerObjects = espObjects[player.UserId]
+
+				local highlight = Instance.new("Highlight")
+				highlight.FillTransparency = 0.5
+				highlight.OutlineTransparency = 0
+				highlight.FillColor = Color3.fromRGB(255, 0, 0)
+				highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+				highlight.Adornee = character
+				highlight.Parent = character
+				playerObjects.highlight = highlight
+
+				local billboardGui = Instance.new("BillboardGui")
+				billboardGui.Size = UDim2.new(0, 100, 0, 40)
+				billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+				billboardGui.AlwaysOnTop = true
+				billboardGui.Parent = humanoidRootPart
+				playerObjects.billboardGui = billboardGui
+
+				local healthFrame = Instance.new("Frame")
+				healthFrame.Size = UDim2.new(1, 0, 0.3, 0)
+				healthFrame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+				healthFrame.BorderSizePixel = 0
+				healthFrame.Parent = billboardGui
+				playerObjects.healthFrame = healthFrame
+
+				local nameLabel = Instance.new("TextLabel")
+				nameLabel.Size = UDim2.new(1, 0, 0.7, 0)
+				nameLabel.Position = UDim2.new(0, 0, 0.3, 0)
+				nameLabel.BackgroundTransparency = 1
+				nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+				nameLabel.TextScaled = true
+				nameLabel.Parent = billboardGui
+				playerObjects.nameLabel = nameLabel
+
+				local updateConnection = RunService.RenderStepped:Connect(function()
+					if not character:IsDescendantOf(workspace) or not humanoid.Parent then
+						if playerObjects.updateConnection then
+							playerObjects.updateConnection:Disconnect()
+						end
+						return
+					end
+
+					if player.Team == Teams.Zombies then
+						highlight.FillColor = Color3.fromRGB(0, 255, 0)
+					else
+						highlight.FillColor = Color3.fromRGB(255, 0, 0)
+					end
+
+					healthFrame.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 0.3, 0)
+					nameLabel.Text = player.Name .. "\n" .. math.floor(humanoid.Health) .. "/" .. humanoid.MaxHealth
+
+					local distance = (LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")) and 
+						(LocalPlayer.Character.HumanoidRootPart.Position - humanoidRootPart.Position).Magnitude or 0
+					local transparency = math.clamp(distance / 100, 0, 0.8)
+					highlight.FillTransparency = transparency
+					highlight.OutlineTransparency = transparency
+					billboardGui.Enabled = distance < 100
+				end)
+				playerObjects.updateConnection = updateConnection
+				table.insert(connections, updateConnection)
+
+				local deathConnection = humanoid.Died:Connect(function()
+					if playerObjects.updateConnection then
+						playerObjects.updateConnection:Disconnect()
+					end
+					for _, object in pairs(playerObjects) do
+						if typeof(object) == "Instance" then
+							object:Destroy()
+						end
+					end
+					espObjects[player.UserId] = nil
+				end)
+				table.insert(connections, deathConnection)
+			end
+
+			if Value then
+				for _, player in ipairs(Players:GetPlayers()) do
+					if player ~= LocalPlayer then
+						if player.Character then
+							createESP(player.Character)
+						end
+						local connection = player.CharacterAdded:Connect(createESP)
+						table.insert(connections, connection)
+					end
+				end
+
+				local playerAddedConnection = Players.PlayerAdded:Connect(function(player)
+					if player ~= LocalPlayer then
+						local connection = player.CharacterAdded:Connect(createESP)
+						table.insert(connections, connection)
+					end
+				end)
+				table.insert(connections, playerAddedConnection)
+			else
+				cleanupESP()
+			end
+		end,
+	})
 }
 
 local MiscTab = Window:CreateTab("Misc", "folder-cog")
