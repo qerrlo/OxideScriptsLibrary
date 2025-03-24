@@ -58,7 +58,7 @@ function ESPManager:CreateESPObjects()
     self.espObjects.gui.Name = "espGui"
     self.espObjects.gui.Adornee = self.ayuwoki:FindFirstChild("Head")
     self.espObjects.gui.AlwaysOnTop = true
-    self.espObjects.gui.Size = UDim2.new(10, 0, 5, 0)
+    self.espObjects.gui.Size = UDim2.new(0, 50, 0, 50)
     self.espObjects.gui.StudsOffsetWorldSpace = Vector3.new(0, 4, 0)
     self.espObjects.gui.Parent = self.ayuwoki
     
