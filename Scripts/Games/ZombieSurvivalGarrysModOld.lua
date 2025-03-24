@@ -1,7 +1,7 @@
 -- Author: @hinorium
 
 -- Game: Zombie Survival Garry's Mod [Old]
--- Version: 1.05
+-- Version: 1.05a
 
 if (game.PlaceId ~= 10149471313) then
 	return warn("this place don't expected")
@@ -39,7 +39,7 @@ local VoiceChatService = game:GetService("VoiceChatService")
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.0.5"
+local CurrentVersion = "1.0.5a"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -111,15 +111,33 @@ local MiscButtons = {
 	DestroySigils = MainTab:CreateButton({
 		Name = "Destroy All Sigil's [Only Zombie]",
 		Callback = function()
+			local function getZombieCharacter()
+				local character = Players.LocalPlayer.Character
+				if not character then return nil end
+
+				for _, zombieType in ipairs({"Zombie", "Nightmare", "Crow"}) do
+					if character:FindFirstChild(zombieType) then
+						return character[zombieType]
+					end
+				end
+				return nil
+			end
+			
 			local function destroySigil(sigil)
 				local maxHP = sigil:GetAttribute("MaxHP") or 1000
 				local currentHP = sigil:GetAttribute("HP") or 1000
 				local damagePerHit = 55
 				local hitsNeeded = math.ceil(currentHP / damagePerHit)
-
+				
+				local zombieChar = getZombieCharacter()
+				if not zombieChar then
+					notify('Error', 'You must be a zombie!')
+					return
+				end
+				
 				for i = 1, hitsNeeded do
 					local args = {
-						Players.LocalPlayer.Character.Zombie or Players.LocalPlayer.Character.Nightmare or Players.LocalPlayer.Character.Crow,
+						zombieChar,
 						sigil,
 						sigil.CFrame,
 						55
@@ -153,9 +171,27 @@ local MiscButtons = {
 	DestroyBarricades = MainTab:CreateButton({
 		Name = "Destroy All Barricades [Only Zombie]",
 		Callback = function()
+			local function getZombieCharacter()
+				local character = Players.LocalPlayer.Character
+				if not character then return nil end
+
+				for _, zombieType in ipairs({"Zombie", "Nightmare", "Crow"}) do
+					if character:FindFirstChild(zombieType) then
+						return character[zombieType]
+					end
+				end
+				return nil
+			end
+
 			local function damageBarricade(barricade)
+				local zombieChar = getZombieCharacter()
+				if not zombieChar then
+					notify('Error', 'You must be a zombie!')
+					return
+				end
+
 				local args = {
-					Players.LocalPlayer.Character.Zombie or Players.LocalPlayer.Character.Nightmare or Players.LocalPlayer.Character.Crow,
+					zombieChar,
 					barricade,
 					barricade.CFrame,
 					55,
@@ -179,20 +215,23 @@ local MiscButtons = {
 			local attackCount = 0
 			local maxAttacks = 30
 
-			task.spawn(function()
-				while attackCount < maxAttacks do
-					for _, barricade in ipairs(barricades) do
-						if barricade.Parent and barricade:GetAttribute("BarricadeHP") and barricade:GetAttribute("BarricadeHP") > 0 then
-							task.spawn(function()
-								damageBarricade(barricade)
-							end)
+			for i = 1, 3 do
+				task.spawn(function()
+					while attackCount < maxAttacks do
+						for _, barricade in ipairs(barricades) do
+							if barricade.Parent and barricade:GetAttribute("BarricadeHP") and barricade:GetAttribute("BarricadeHP") > 0 then
+								task.spawn(function()
+									damageBarricade(barricade)
+								end)
+							end
 						end
-					end
 
-					attackCount = attackCount + 1
-					task.wait(0.1)
-				end
-			end)
+						attackCount = attackCount + 1
+						task.wait(0.05)
+					end
+				end)
+				task.wait(0.03)
+			end
 
 			notify('Info', 'All barricades destroyed!')
 		end,
