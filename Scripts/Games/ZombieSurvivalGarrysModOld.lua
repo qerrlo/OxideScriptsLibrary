@@ -1,7 +1,7 @@
 -- Author: @hinorium
 
 -- Game: Zombie Survival Garry's Mod [Old]
--- Version: 1.04
+-- Version: 1.05
 
 if (game.PlaceId ~= 10149471313) then
 	return warn("this place don't expected")
@@ -39,7 +39,7 @@ local VoiceChatService = game:GetService("VoiceChatService")
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.0.4"
+local CurrentVersion = "1.0.5"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -119,7 +119,7 @@ local MiscButtons = {
 
 				for i = 1, hitsNeeded do
 					local args = {
-						Players.LocalPlayer.Character.Zombie,
+						Players.LocalPlayer.Character.Zombie or Players.LocalPlayer.Character.Nightmare or Players.LocalPlayer.Character.Crow,
 						sigil,
 						sigil.CFrame,
 						55
@@ -153,29 +153,15 @@ local MiscButtons = {
 	DestroyBarricades = MainTab:CreateButton({
 		Name = "Destroy All Barricades [Only Zombie]",
 		Callback = function()
-			local function destroyBarricade(barricade)
-				local maxHP = barricade:GetAttribute("MaxHP")
-				local currentHP = barricade:GetAttribute("BarricadeHP")
-				local damagePerHit = 55
-				local hitsNeeded = math.ceil(currentHP / damagePerHit)
-
-				for i = 1, hitsNeeded do
-					local args = {
-						game:GetService("Players").LocalPlayer.Character.Zombie,
-						barricade,
-						barricade.CFrame,
-						55,
-						0.1
-					}
-
-					fire_remote("DamagedBarricade", args)
-					task.wait(0.1)
-
-					local newHP = barricade:GetAttribute("BarricadeHP")
-					if newHP and newHP <= 0 then
-						break
-					end
-				end
+			local function damageBarricade(barricade)
+				local args = {
+					Players.LocalPlayer.Character.Zombie or Players.LocalPlayer.Character.Nightmare or Players.LocalPlayer.Character.Crow,
+					barricade,
+					barricade.CFrame,
+					55,
+					0.1
+				}
+				fire_remote("DamagedBarricade", args)
 			end
 
 			local barricadesModel = workspace:FindFirstChild("Barricades") 
@@ -183,14 +169,30 @@ local MiscButtons = {
 
 			if not barricadesModel then return end
 
+			local barricades = {}
 			for _, barricade in ipairs(barricadesModel:GetChildren()) do
 				if barricade:IsA("MeshPart") and barricade.Name == "Barricade" then
-					task.spawn(function()
-						destroyBarricade(barricade)
-						task.wait(0.2)
-					end)
+					table.insert(barricades, barricade)
 				end
 			end
+
+			local attackCount = 0
+			local maxAttacks = 30
+
+			task.spawn(function()
+				while attackCount < maxAttacks do
+					for _, barricade in ipairs(barricades) do
+						if barricade.Parent and barricade:GetAttribute("BarricadeHP") and barricade:GetAttribute("BarricadeHP") > 0 then
+							task.spawn(function()
+								damageBarricade(barricade)
+							end)
+						end
+					end
+
+					attackCount = attackCount + 1
+					task.wait(0.1)
+				end
+			end)
 
 			notify('Info', 'All barricades destroyed!')
 		end,
