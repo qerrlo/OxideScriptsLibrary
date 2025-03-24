@@ -1,7 +1,7 @@
 -- Author: @hinorium
 
 -- Game: Zombie Survival Garry's Mod [Old]
--- Version: 1.03c
+-- Version: 1.04
 
 if (game.PlaceId ~= 10149471313) then
 	return warn("this place don't expected")
@@ -39,7 +39,7 @@ local VoiceChatService = game:GetService("VoiceChatService")
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.0.3c"
+local CurrentVersion = "1.0.4"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -147,7 +147,52 @@ local MiscButtons = {
 				end
 			end
 
-			notify('Info', 'Destroying sigils based on their HP')
+			notify('Info', 'All sigils destroyed!')
+		end,
+	}),
+	DestroyBarricades = MainTab:CreateButton({
+		Name = "Destroy All Barricades [Only Zombie]",
+		Callback = function()
+			local function destroyBarricade(barricade)
+				local maxHP = barricade:GetAttribute("MaxHP")
+				local currentHP = barricade:GetAttribute("BarricadeHP")
+				local damagePerHit = 55
+				local hitsNeeded = math.ceil(currentHP / damagePerHit)
+
+				for i = 1, hitsNeeded do
+					local args = {
+						game:GetService("Players").LocalPlayer.Character.Zombie,
+						barricade,
+						barricade.CFrame,
+						55,
+						0.1
+					}
+
+					fire_remote("DamagedBarricade", args)
+					task.wait(0.1)
+
+					local newHP = barricade:GetAttribute("BarricadeHP")
+					if newHP and newHP <= 0 then
+						break
+					end
+				end
+			end
+
+			local barricadesModel = workspace:FindFirstChild("Barricades") 
+				and workspace.Barricades:FindFirstChild("Model")
+
+			if not barricadesModel then return end
+
+			for _, barricade in ipairs(barricadesModel:GetChildren()) do
+				if barricade:IsA("MeshPart") and barricade.Name == "Barricade" then
+					task.spawn(function()
+						destroyBarricade(barricade)
+						task.wait(0.2)
+					end)
+				end
+			end
+
+			notify('Info', 'All barricades destroyed!')
 		end,
 	}),
 }
