@@ -91,6 +91,14 @@ local ESPManager = {
     connections = {}
 }
 
+function ESPManager:GetMonster()
+    local monsterModel = workspace.CurrentMonster:FindFirstChildOfClass("Model")
+    if monsterModel then
+        return monsterModel:FindFirstChild("Monster")
+    end
+    return nil
+end
+
 function ESPManager:CreateESPObjects()
     if not self.monster then return end
     
@@ -171,6 +179,7 @@ end
 function ESPManager:SetEnabled(enabled)
     self.enabled = enabled
     if enabled then
+        self.monster = self:GetMonster()
         self:CreateESPObjects()
         
         self.connections.update = RunService.RenderStepped:Connect(function()
@@ -188,6 +197,27 @@ function ESPManager:SetEnabled(enabled)
     end
 end
 
+workspace.CurrentMonster.ChildAdded:Connect(function(child)
+    if child:IsA("Model") then
+        ESPManager.monster = child:FindFirstChild("Monster")
+        if ESPManager.enabled then
+            ESPManager:CreateESPObjects()
+        end
+    end
+end)
+
+workspace.CurrentMonster.ChildRemoved:Connect(function(child)
+    if child:IsA("Model") then
+        ESPManager.monster = nil
+        ESPManager:CleanupESPObjects()
+    end
+end)
+
+ESPManager.monster = ESPManager:GetMonster()
+if ESPManager.monster and ESPManager.enabled then
+    ESPManager:CreateESPObjects()
+end
+
 local ESP_MonsterToggle = EspTab:CreateToggle({
     Name = "ESP Monster",
     CurrentValue = false,
@@ -196,34 +226,6 @@ local ESP_MonsterToggle = EspTab:CreateToggle({
         ESPManager:SetEnabled(Value)
     end,
 })
-
-workspace.CurrentMonster.ChildAdded:Connect(function(child)
-    if child.Name == "Monster" then
-        ESPManager.monster = child
-        if ESPManager.enabled then
-            ESPManager:CreateESPObjects()
-        end
-    end
-end)
-
-workspace.CurrentMonster.ChildRemoved:Connect(function(child)
-    if child.Name == "Monster" then
-        ESPManager.monster = nil
-        ESPManager:CleanupESPObjects()
-    end
-end)
-
-if workspace.CurrentMonster:FindFirstChild("Monster") then
-    for _, model in pairs(workspace.CurrentMonster:GetChildren()) do
-        if model:FindFirstChild("Monster") then
-            ESPManager.monster = model.Monster
-            if ESPManager.enabled then
-                ESPManager:CreateESPObjects()
-            end
-            break
-        end
-    end
-end
 
 local MiscTab = Window:CreateTab("Misc", "folder-cog")
 local MiscButtonsSection = MiscTab:CreateSection("Buttons")
