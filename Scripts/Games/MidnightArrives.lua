@@ -95,16 +95,9 @@ local EspTab = Window:CreateTab("ESP", "user-round-search")
 local EspButtonsSection = EspTab:CreateSection("Buttons")
 
 local ESPManager = {
-	enabled = {
-		monster = false,
-		collect = false
-	},
+	enabled = false,
 	monsters = {},
-	collectibles = {},
-	espObjects = {
-		monster = {},
-		collect = {}
-	},
+	espObjects = {},
 	connections = {}
 }
 
@@ -121,7 +114,7 @@ function ESPManager:GetMonsters()
 	return monsters
 end
 
-function ESPManager:CreateMonsterESP(monster)
+function ESPManager:CreateESPObject(monster)
 	if not monster then return end
 
 	local espData = {
@@ -171,8 +164,8 @@ function ESPManager:CreateMonsterESP(monster)
 	return espData
 end
 
-function ESPManager:UpdateMonsterESP(monster, espData)
-	if not self.enabled.monster or not monster or not Character then return end
+function ESPManager:UpdateESPInfo(monster, espData)
+	if not self.enabled or not monster or not Character then return end
 
 	if espData.nameLabel then
 		local monsterName = monster.Parent.Name
@@ -190,80 +183,6 @@ function ESPManager:UpdateMonsterESP(monster, espData)
 	end
 end
 
-function ESPManager:GetCollectibles()
-	local collectibles = {}
-	local currentMap = workspace.CurrentMap:GetChildren()[1]
-	if currentMap and currentMap:FindFirstChild("To_Collect") then
-		for _, item in ipairs(currentMap.To_Collect:GetChildren()) do
-			table.insert(collectibles, item)
-		end
-	end
-	return collectibles
-end
-
-function ESPManager:CreateCollectibleESP(item)
-	if not item then return end
-
-	local espData = {
-		highlight = Instance.new("Highlight"),
-		gui = Instance.new("BillboardGui"),
-		nameLabel = Instance.new("TextLabel"),
-		distanceLabel = Instance.new("TextLabel")
-	}
-
-	espData.highlight.Name = "esp"
-	espData.highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-	espData.highlight.FillColor = Color3.fromRGB(255, 255, 0)
-	espData.highlight.FillTransparency = 0.5
-	espData.highlight.OutlineColor = Color3.fromRGB(155, 155, 0)
-	espData.highlight.OutlineTransparency = 0
-	espData.highlight.Parent = item
-
-	espData.gui.Name = "espGui"
-	espData.gui.Adornee = item
-	espData.gui.AlwaysOnTop = true
-	espData.gui.Size = UDim2.new(0, 50, 0, 50)
-	espData.gui.StudsOffsetWorldSpace = Vector3.new(0, 2, 0)
-	espData.gui.Parent = item
-
-	local uilist = Instance.new("UIListLayout")
-	uilist.FillDirection = Enum.FillDirection.Vertical
-	uilist.HorizontalAlignment = Enum.HorizontalAlignment.Center
-	uilist.Parent = espData.gui
-
-	espData.nameLabel.BackgroundTransparency = 1
-	espData.nameLabel.Size = UDim2.new(1, 0, 0.2, 0)
-	espData.nameLabel.Font = Enum.Font.RobotoMono
-	espData.nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-	espData.nameLabel.TextScaled = true
-	espData.nameLabel.Parent = espData.gui
-
-	espData.distanceLabel.BackgroundTransparency = 1
-	espData.distanceLabel.Size = UDim2.new(1, 0, 0.2, 0)
-	espData.distanceLabel.Font = Enum.Font.RobotoMono
-	espData.distanceLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-	espData.distanceLabel.TextScaled = true
-	espData.distanceLabel.Parent = espData.gui
-
-	return espData
-end
-
-function ESPManager:UpdateCollectibleESP(item, espData)
-	if not self.enabled.collect or not item or not Character then return end
-
-	if espData.nameLabel then
-		espData.nameLabel.Text = item.Name
-	end
-
-	if espData.distanceLabel then
-		local characterRoot = Character:FindFirstChild("HumanoidRootPart")
-		if characterRoot then
-			local distance = (item.Position - characterRoot.Position).Magnitude
-			espData.distanceLabel.Text = string.format("Distance: %d", math.floor(distance))
-		end
-	end
-end
-
 function ESPManager:CleanupESPObject(espData)
 	if not espData then return end
 	for _, object in pairs(espData) do
@@ -273,70 +192,43 @@ function ESPManager:CleanupESPObject(espData)
 	end
 end
 
-function ESPManager:SetEnabled(type, enabled)
-	self.enabled[type] = enabled
-
-	if type == "monster" then
-		if enabled then
-			for _, monster in ipairs(self:GetMonsters()) do
-				self.espObjects.monster[monster] = self:CreateMonsterESP(monster)
-			end
-		else
-			for monster, espData in pairs(self.espObjects.monster) do
-				self:CleanupESPObject(espData)
-			end
-			self.espObjects.monster = {}
+function ESPManager:SetEnabled(enabled)
+	self.enabled = enabled
+	if enabled then
+		for _, monster in ipairs(self:GetMonsters()) do
+			self.espObjects[monster] = self:CreateESPObject(monster)
 		end
-	elseif type == "collect" then
-		if enabled then
-			for _, item in ipairs(self:GetCollectibles()) do
-				self.espObjects.collect[item] = self:CreateCollectibleESP(item)
-			end
-		else
-			for item, espData in pairs(self.espObjects.collect) do
-				self:CleanupESPObject(espData)
-			end
-			self.espObjects.collect = {}
-		end
-	end
 
-	if self.connections.update then
-		self.connections.update:Disconnect()
-	end
-
-	if self.enabled.monster or self.enabled.collect then
 		self.connections.update = RunService.RenderStepped:Connect(function()
-			if self.enabled.monster then
-				for monster, espData in pairs(self.espObjects.monster) do
-					if monster.Parent then
-						self:UpdateMonsterESP(monster, espData)
-					else
-						self:CleanupESPObject(espData)
-						self.espObjects.monster[monster] = nil
-					end
-				end
-			end
-
-			if self.enabled.collect then
-				for item, espData in pairs(self.espObjects.collect) do
-					if item.Parent then
-						self:UpdateCollectibleESP(item, espData)
-					else
-						self:CleanupESPObject(espData)
-						self.espObjects.collect[item] = nil
-					end
+			for monster, espData in pairs(self.espObjects) do
+				if monster.Parent then
+					self:UpdateESPInfo(monster, espData)
+				else
+					self:CleanupESPObject(espData)
+					self.espObjects[monster] = nil
 				end
 			end
 		end)
+	else
+		for monster, espData in pairs(self.espObjects) do
+			self:CleanupESPObject(espData)
+		end
+		self.espObjects = {}
+
+		for _, connection in pairs(self.connections) do
+			if connection then
+				connection:Disconnect()
+			end
+		end
+		self.connections = {}
 	end
 end
 
--- Monster events
 workspace.CurrentMonster.ChildAdded:Connect(function(child)
-	if child:IsA("Model") and ESPManager.enabled.monster then
+	if child:IsA("Model") and ESPManager.enabled then
 		local monster = child:WaitForChild("Monster", 10)
 		if monster then
-			ESPManager.espObjects.monster[monster] = ESPManager:CreateMonsterESP(monster)
+			ESPManager.espObjects[monster] = ESPManager:CreateESPObject(monster)
 		end
 	end
 end)
@@ -344,24 +236,18 @@ end)
 workspace.CurrentMonster.ChildRemoved:Connect(function(child)
 	if child:IsA("Model") then
 		local monster = child:FindFirstChild("Monster")
-		if monster and ESPManager.espObjects.monster[monster] then
-			ESPManager:CleanupESPObject(ESPManager.espObjects.monster[monster])
-			ESPManager.espObjects.monster[monster] = nil
+		if monster and ESPManager.espObjects[monster] then
+			ESPManager:CleanupESPObject(ESPManager.espObjects[monster])
+			ESPManager.espObjects[monster] = nil
 		end
 	end
 end)
 
--- Collectibles events
-workspace.CurrentMap.ChildAdded:Connect(function(map)
-	if ESPManager.enabled.collect then
-		task.wait(1)
-		if map:FindFirstChild("To_Collect") then
-			for _, item in ipairs(map.To_Collect:GetChildren()) do
-				ESPManager.espObjects.collect[item] = ESPManager:CreateCollectibleESP(item)
-			end
-		end
+if ESPManager.enabled then
+	for _, monster in ipairs(ESPManager:GetMonsters()) do
+		ESPManager.espObjects[monster] = ESPManager:CreateESPObject(monster)
 	end
-end)
+end
 
 local ESP_Toggles = {
 	ESP_MonsterToggle = EspTab:CreateToggle({
@@ -369,7 +255,7 @@ local ESP_Toggles = {
 		CurrentValue = false,
 		Flag = "ESP_Monster",
 		Callback = function(Value)
-			ESPManager:SetEnabled("monster", Value)
+			ESPManager:SetEnabled(Value)
 		end,
 	}),
 	ESP_ToCollectToggle = EspTab:CreateToggle({
@@ -377,7 +263,7 @@ local ESP_Toggles = {
 		CurrentValue = false,
 		Flag = "ESP_ToCollect",
 		Callback = function(Value)
-			ESPManager:SetEnabled("collect", Value)
+			-- logic...
 		end,
 	})
 }
