@@ -154,7 +154,7 @@ function ESPManager:CreateESPObject(monster)
 		espData.gui.Name = "espGui"
 		espData.gui.Adornee = head
 		espData.gui.AlwaysOnTop = true
-		espData.gui.Size = UDim2.new(0, 50, 0, 50)
+		espData.gui.Size = UDim2.new(0, 100, 0, 50) -- Увеличил ширину для лучшей видимости
 		espData.gui.StudsOffsetWorldSpace = Vector3.new(0, 4, 0)
 		espData.gui.Parent = monster
 
@@ -164,17 +164,19 @@ function ESPManager:CreateESPObject(monster)
 		uilist.Parent = espData.gui
 
 		espData.nameLabel.BackgroundTransparency = 1
-		espData.nameLabel.Size = UDim2.new(1, 0, 0.2, 0)
+		espData.nameLabel.Size = UDim2.new(1, 0, 0.5, 0)
 		espData.nameLabel.Font = Enum.Font.RobotoMono
 		espData.nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 		espData.nameLabel.TextScaled = true
+		espData.nameLabel.Text = "Monster: " .. (monster.Parent and monster.Parent.Name or "Unknown")
 		espData.nameLabel.Parent = espData.gui
 
 		espData.distanceLabel.BackgroundTransparency = 1
-		espData.distanceLabel.Size = UDim2.new(1, 0, 0.2, 0)
+		espData.distanceLabel.Size = UDim2.new(1, 0, 0.5, 0)
 		espData.distanceLabel.Font = Enum.Font.RobotoMono
 		espData.distanceLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 		espData.distanceLabel.TextScaled = true
+		espData.distanceLabel.Text = "Distance: Calculating..."
 		espData.distanceLabel.Parent = espData.gui
 	end
 
@@ -193,7 +195,7 @@ function ESPManager:CreateCollectibleESP(item)
 
 	espData.highlight.Name = "esp"
 	espData.highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-	espData.highlight.FillColor = Color3.fromRGB(255, 255, 0) -- Желтый цвет для коллектиблов
+	espData.highlight.FillColor = Color3.fromRGB(255, 255, 0)
 	espData.highlight.FillTransparency = 0.5
 	espData.highlight.OutlineColor = Color3.fromRGB(155, 155, 0)
 	espData.highlight.OutlineTransparency = 0
@@ -202,7 +204,7 @@ function ESPManager:CreateCollectibleESP(item)
 	espData.gui.Name = "espGui"
 	espData.gui.Adornee = item
 	espData.gui.AlwaysOnTop = true
-	espData.gui.Size = UDim2.new(0, 50, 0, 50)
+	espData.gui.Size = UDim2.new(0, 100, 0, 50) -- Увеличил ширину для лучшей видимости
 	espData.gui.StudsOffsetWorldSpace = Vector3.new(0, 2, 0)
 	espData.gui.Parent = item
 
@@ -212,29 +214,34 @@ function ESPManager:CreateCollectibleESP(item)
 	uilist.Parent = espData.gui
 
 	espData.nameLabel.BackgroundTransparency = 1
-	espData.nameLabel.Size = UDim2.new(1, 0, 0.2, 0)
+	espData.nameLabel.Size = UDim2.new(1, 0, 0.5, 0)
 	espData.nameLabel.Font = Enum.Font.RobotoMono
 	espData.nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 	espData.nameLabel.TextScaled = true
-	espData.nameLabel.Text = item.Name
+	espData.nameLabel.Text = "Item: " .. (item.Name or "Unknown")
 	espData.nameLabel.Parent = espData.gui
 
 	espData.distanceLabel.BackgroundTransparency = 1
-	espData.distanceLabel.Size = UDim2.new(1, 0, 0.2, 0)
+	espData.distanceLabel.Size = UDim2.new(1, 0, 0.5, 0)
 	espData.distanceLabel.Font = Enum.Font.RobotoMono
 	espData.distanceLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 	espData.distanceLabel.TextScaled = true
+	espData.distanceLabel.Text = "Distance: Calculating..."
 	espData.distanceLabel.Parent = espData.gui
 
 	return espData
 end
 
 function ESPManager:UpdateESPInfo(monster, espData)
-	if not self.enabled or not monster or not Character then return end
+	if not self.enabled.monster or not monster or not Character then return end
 
-	if espData.nameLabel then
-		local monsterName = monster.Parent.Name
-		espData.nameLabel.Text = "Monster: " .. monsterName
+	if espData.nameLabel and monster.Parent then
+		local monsterName = monster.Parent.Name or "Unknown Monster"
+		if monsterName and monsterName ~= "" then
+			espData.nameLabel.Text = "Monster: " .. monsterName
+		else
+			espData.nameLabel.Text = "Unknown Monster"
+		end
 	end
 
 	if espData.distanceLabel then
@@ -244,6 +251,8 @@ function ESPManager:UpdateESPInfo(monster, espData)
 		if monsterRoot and characterRoot then
 			local distance = (monsterRoot.Position - characterRoot.Position).Magnitude
 			espData.distanceLabel.Text = string.format("Distance: %d", math.floor(distance))
+		else
+			espData.distanceLabel.Text = "Distance: ?"
 		end
 	end
 end
@@ -251,11 +260,22 @@ end
 function ESPManager:UpdateCollectibleESP(item, espData)
 	if not self.enabled.collect or not item or not Character then return end
 
+	if espData.nameLabel then
+		local itemName = item.Name or "Unknown Item"
+		if itemName and itemName ~= "" then
+			espData.nameLabel.Text = "Item: " .. itemName
+		else
+			espData.nameLabel.Text = "Unknown Item"
+		end
+	end
+
 	if espData.distanceLabel then
 		local characterRoot = Character:FindFirstChild("HumanoidRootPart")
-		if characterRoot then
+		if characterRoot and item:IsA("BasePart") then
 			local distance = (item.Position - characterRoot.Position).Magnitude
 			espData.distanceLabel.Text = string.format("Distance: %d", math.floor(distance))
+		else
+			espData.distanceLabel.Text = "Distance: ?"
 		end
 	end
 end
