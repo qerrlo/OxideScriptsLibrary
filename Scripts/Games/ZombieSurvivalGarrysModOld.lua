@@ -250,8 +250,6 @@ local MainToggles = {
 			local localPlayer = Players.LocalPlayer
 			local camera = workspace.CurrentCamera
 			local botsFolder = workspace:WaitForChild("Bots")
-			local RunService = game:GetService("RunService")
-			local TweenService = game:GetService("TweenService")
 
 			local AIM_RADIUS = 60
 			local TWEEN_TIME = 0.15
@@ -286,39 +284,41 @@ local MainToggles = {
 			end
 
 			local function getClosestTarget()
-				local screenCenter = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2)
-				local closestTarget = nil
-				local minDistance = AIM_RADIUS
+				local function getClosestTargetByAngle(maxAngle)
+					local cameraCFrame = workspace.CurrentCamera.CFrame
+					local cameraLookVector = cameraCFrame.LookVector
 
-				for _, char in pairs(getEnemyPlayers()) do
-					local part = char:FindFirstChild(AIM_PART) or char:FindFirstChild("HumanoidRootPart")
-					if part then
-						local screenPos, onScreen = camera:WorldToScreenPoint(part.Position)
-						if onScreen then
-							local dist = (Vector2.new(screenPos.X, screenPos.Y) - screenCenter).Magnitude
-							if dist < minDistance then
-								minDistance = dist
+					local closestTarget = nil
+					local smallestAngle = math.rad(maxAngle)
+
+					for _, char in pairs(getEnemyPlayers()) do
+						local part = char:FindFirstChild(AIM_PART) or char:FindFirstChild("HumanoidRootPart")
+						if part then
+							local directionToTarget = (part.Position - cameraCFrame.Position).Unit
+							local angle = math.acos(cameraLookVector:Dot(directionToTarget))
+							if angle < smallestAngle then
+								smallestAngle = angle
 								closestTarget = part
 							end
 						end
 					end
-				end
 
-				for _, bot in pairs(getAliveZombies()) do
-					local part = bot:FindFirstChild(AIM_PART) or bot:FindFirstChild("HumanoidRootPart")
-					if part then
-						local screenPos, onScreen = camera:WorldToScreenPoint(part.Position)
-						if onScreen then
-							local dist = (Vector2.new(screenPos.X, screenPos.Y) - screenCenter).Magnitude
-							if dist < minDistance then
-								minDistance = dist
+					for _, bot in pairs(getAliveZombies()) do
+						local part = bot:FindFirstChild(AIM_PART) or bot:FindFirstChild("HumanoidRootPart")
+						if part then
+							local directionToTarget = (part.Position - cameraCFrame.Position).Unit
+							local angle = math.acos(cameraLookVector:Dot(directionToTarget))
+							if angle < smallestAngle then
+								smallestAngle = angle
 								closestTarget = part
 							end
 						end
 					end
-				end
 
-				return closestTarget
+					return closestTarget
+				end
+				
+				return getClosestTargetByAngle(15)
 			end
 
 			local function canSeeTarget(targetPart)
