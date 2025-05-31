@@ -433,9 +433,8 @@ local MainToggles = {
 						end)
 						task.wait(0.03)
 					end
-
-					notify('Info', 'All barricades destroying! [Enabled]')
 				end)
+				notify('Info', 'All barricades destroying! [Enabled]')
 			else
 				con:Disconnect()
 				notify('Info', 'All barricades destroying! [Disabled]')
