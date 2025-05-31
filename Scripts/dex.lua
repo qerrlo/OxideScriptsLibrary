@@ -8,6 +8,8 @@
 	Dex is a debugging suite designed to help the user debug games and find any potential vulnerabilities.
 ]]
 
+print("VERSION_X LOADED!")
+
 local nodes = {}
 local selection
 local cloneref = cloneref or function(...) return ... end
@@ -10783,7 +10785,6 @@ Main = (function()
 			rawAPI = oldgame:HttpGet("https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/roblox/API-Dump.json")
 			Main.RawAPI = rawAPI
 			api = jsonDecode(rawAPI)
-			print(api)
 		end
 
 		local classes,enums = {},{}
