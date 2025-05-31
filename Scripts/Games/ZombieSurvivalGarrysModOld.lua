@@ -38,7 +38,7 @@ local VoiceChatService = game:GetService("VoiceChatService")
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.13"
+local CurrentVersion = "1.14"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
