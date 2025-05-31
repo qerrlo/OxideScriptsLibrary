@@ -1,14 +1,12 @@
 -- Author: @hinorium
-
 -- Game: Zombie Survival Garry's Mod [Old]
--- Version: 1.0.6
 
 if (game.PlaceId ~= 10149471313) then
 	return warn("this place don't expected")
 end
 
-local COREGUI = game:GetService("CoreGui")
-local Players = game:GetService("Players")
+local COREGUI = cloneref(game:GetService("CoreGui"))
+local Players = cloneref(game:GetService("Players"))
 local PlayerGui = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -28,18 +26,18 @@ local Teams = game:GetService("Teams")
 local StarterPlayer = game:GetService("StarterPlayer")
 local InsertService = game:GetService("InsertService")
 local ChatService = game:GetService("Chat")
-local ProximityPromptService = game:GetService("ProximityPromptService")
-local StatsService = game:GetService("Stats")
-local MaterialService = game:GetService("MaterialService")
-local AvatarEditorService = game:GetService("AvatarEditorService")
-local TextChatService = game:GetService("TextChatService")
-local CaptureService = game:GetService("CaptureService")
-local VoiceChatService = game:GetService("VoiceChatService")
+local ProximityPromptService = cloneref(game:GetService("ProximityPromptService"))
+local StatsService = cloneref(game:GetService("Stats"))
+local MaterialService = cloneref(game:GetService("MaterialService"))
+local AvatarEditorService = cloneref(game:GetService("AvatarEditorService"))
+local TextChatService = cloneref(game:GetService("TextChatService"))
+local CaptureService = cloneref(game:GetService("CaptureService"))
+local VoiceChatService = cloneref(game:GetService("VoiceChatService"))
 
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.0.6"
+local CurrentVersion = "1.0.7"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -122,19 +120,19 @@ local MainButtons = {
 				end
 				return nil
 			end
-			
+
 			local function destroySigil(sigil)
 				local maxHP = sigil:GetAttribute("MaxHP") or 1000
 				local currentHP = sigil:GetAttribute("HP") or 1000
 				local damagePerHit = 55
 				local hitsNeeded = math.ceil(currentHP / damagePerHit)
-				
+
 				local zombieChar = getZombieCharacter()
 				if not zombieChar then
 					notify('Error', 'You must be a zombie!')
 					return
 				end
-				
+
 				for i = 1, hitsNeeded do
 					local args = {
 						zombieChar,
@@ -241,6 +239,209 @@ local MainButtons = {
 local MainTogglesSection = MainTab:CreateSection("Toggles")
 
 local MainToggles = {
+	AimAssist = MainTab:CreateToggle({
+		CurrentValue = false,
+		Flag = "__Toggle_AimAssist",
+		Name = "AimAssist",
+		Callback = function(Value)
+			local localPlayer = Players.LocalPlayer
+			local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+			local camera = workspace.CurrentCamera
+			local botsFolder = workspace:WaitForChild("Bots")
+			local teamService = game:GetService("Teams")
+
+			local AIM_RADIUS = 60
+			local TWEEN_TIME = 0.25
+			local AIM_PART = "Head"
+
+			local tweenInfo = TweenInfo.new(TWEEN_TIME, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+
+			local currentTweenTask = nil
+
+			local function smoothAim(fromRotation, toRotation, tweenInfo)
+				local startTime = os.clock()
+				local elapsed = 0
+				while elapsed <= 1 do
+					local alpha = (os.clock() - startTime) / tweenInfo.Time
+					alpha = math.clamp(alpha, 0, 1)
+					local easedAlpha = TweenService:GetValue(alpha, tweenInfo.EasingStyle, tweenInfo.EasingDirection)
+					local newRotation = fromRotation:Lerp(toRotation, easedAlpha)
+					camera.CFrame = CFrame.new(camera.CFrame.Position) * newRotation
+					RunService.RenderStepped:Wait()
+					elapsed = alpha
+				end
+				currentTweenTask = nil
+			end
+
+			local function getEnemyPlayers()
+				local enemies = {}
+				for _, player in pairs(Players:GetPlayers()) do
+					if player ~= localPlayer and player.Team ~= localPlayer.Team and player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
+						table.insert(enemies, player.Character)
+					end
+				end
+				return enemies
+			end
+
+			local function getAliveZombies()
+				local zombies = {}
+				for _, bot in pairs(botsFolder:GetChildren()) do
+					if localPlayer.Team ~= "Zombies" and bot:FindFirstChild("Humanoid") and bot.Humanoid.Health > 0 then
+						table.insert(zombies, bot)
+					end
+				end
+				return zombies
+			end
+
+			local function getClosestTarget()
+				local screenCenter = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2)
+				local closestTarget = nil
+				local minDistance = AIM_RADIUS
+
+				for _, char in pairs(getEnemyPlayers()) do
+					local part = char:FindFirstChild(AIM_PART) or char:FindFirstChild("HumanoidRootPart")
+					if part then
+						local screenPos, onScreen = camera:WorldToScreenPoint(part.Position)
+						if onScreen then
+							local dist = (Vector2.new(screenPos.X, screenPos.Y) - screenCenter).Magnitude
+							if dist < minDistance then
+								minDistance = dist
+								closestTarget = part
+							end
+						end
+					end
+				end
+
+				for _, bot in pairs(getAliveZombies()) do
+					local part = bot:FindFirstChild(AIM_PART) or bot:FindFirstChild("HumanoidRootPart")
+					if part then
+						local screenPos, onScreen = camera:WorldToScreenPoint(part.Position)
+						if onScreen then
+							local dist = (Vector2.new(screenPos.X, screenPos.Y) - screenCenter).Magnitude
+							if dist < minDistance then
+								minDistance = dist
+								closestTarget = part
+							end
+						end
+					end
+				end
+
+				return closestTarget
+			end
+
+			local function canSeeTarget(targetPart)
+				local rayParams = RaycastParams.new()
+				rayParams.FilterType = Enum.RaycastFilterType.Blacklist
+				rayParams.FilterDescendantsInstances = {localPlayer.Character}
+				rayParams.IgnoreWater = true
+
+				local origin = camera.CFrame.Position
+				local direction = (targetPart.Position - origin).Unit * 500
+
+				local raycastResult = workspace:Raycast(origin, direction, rayParams)
+				if raycastResult then
+					return raycastResult.Instance:IsDescendantOf(targetPart.Parent)
+				else
+					return true
+				end
+			end
+			
+			local con
+			if Value then
+				con = RunService.RenderStepped:Connect(function()
+					local targetPart = getClosestTarget()
+					if targetPart and canSeeTarget(targetPart) then
+						if currentTweenTask then
+							task.cancel(currentTweenTask)
+						end
+						currentTweenTask = task.spawn(smoothAim, camera.CFrame.Rotation, CFrame.new(camera.CFrame.Position, targetPart.Position).Rotation, tweenInfo)
+					end
+				end)
+				notify('Info', 'Aim Assist! [Enabled]')
+			else
+				con:Disconnect()
+				notify('Info', 'Aim Assist! [Disabled]')
+			end
+		end,
+	}),
+	DestroyBarricades = MainTab:CreateToggle({
+		CurrentValue = false,
+		Flag = "__Toggle_ESP",
+		Name = "Destroy All Barricades [Only Zombie]",
+		Callback = function(Value)
+			local function getZombieCharacter()
+				local character = Players.LocalPlayer.Character
+				if not character then return nil end
+
+				for _, zombieType in ipairs({"Zombie", "Nightmare", "Crow"}) do
+					if character:FindFirstChild(zombieType) then
+						return character[zombieType]
+					end
+				end
+				return nil
+			end
+
+			local function damageBarricade(barricade)
+				local zombieChar = getZombieCharacter()
+				if not zombieChar then
+					notify('Error', 'You must be a zombie!')
+					return
+				end
+
+				local args = {
+					zombieChar,
+					barricade,
+					barricade.CFrame,
+					55,
+					0.1
+				}
+				fire_remote("DamagedBarricade", args)
+			end
+
+			local con
+			if Value then
+				con = RunService.RenderStepped:Connect(function()
+					local barricadesModel = workspace:FindFirstChild("Barricades") 
+					and workspace.Barricades:FindFirstChild("Model")
+
+					if not barricadesModel then return end
+
+					local barricades = {}
+					for _, barricade in ipairs(barricadesModel:GetChildren()) do
+						if barricade:IsA("MeshPart") and barricade.Name == "Barricade" then
+							table.insert(barricades, barricade)
+						end
+					end
+
+					local attackCount = 0
+					local maxAttacks = 30
+
+					for i = 1, #barricadesModel:GetChildren() + #barricades do
+						task.spawn(function()
+							while attackCount < maxAttacks do
+								for _, barricade in ipairs(barricades) do
+									if barricade.Parent and barricade:GetAttribute("BarricadeHP") and barricade:GetAttribute("BarricadeHP") > 0 then
+										task.spawn(function()
+											damageBarricade(barricade)
+										end)
+									end
+								end
+
+								attackCount = attackCount + 1
+								task.wait(0.05)
+							end
+						end)
+						task.wait(0.03)
+					end
+
+					notify('Info', 'All barricades destroying! [Enabled]')
+				end)
+			else
+				con:Disconnect()
+				notify('Info', 'All barricades destroying! [Disabled]')
+			end
+		end,
+	}),
 	ESP = MainTab:CreateToggle({
 		Name = "ESP",
 		CurrentValue = false,
@@ -547,7 +748,7 @@ local MiscToggles = {
 		Flag = "__BYPASS_Noclip",
 		Callback = function(Value)
 			_G.NoclipBypassEnabled = Value
-			
+
 			local LocalPlayer = Players.LocalPlayer
 			local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
