@@ -10780,7 +10780,7 @@ Main = (function()
 
 		-- backup for kaboom
 		if not api then
-			rawAPI = oldgame:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/rbx_api.dat")
+			rawAPI = oldgame:HttpGet("https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/roblox/API-Dump.json")
 			Main.RawAPI = rawAPI
 			api = jsonDecode(rawAPI)
 		end
@@ -11473,7 +11473,7 @@ Main = (function()
 
 			-- backup for kaboom
 			if #Main.RobloxVersion < 1 then
-				Main.RobloxVersion = oldgame:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/deps_version.dat"):gsub("%s+", "")
+				Main.RobloxVersion = oldgame:HttpGet("https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/roblox/version-guid.txt"):gsub("%s+", "")
 			end
 		end
 
