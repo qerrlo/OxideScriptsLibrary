@@ -325,7 +325,7 @@ local MainToggles = {
 				for _, char in pairs(getEnemyPlayers()) do
 					local part = char:FindFirstChild(AIM_PART) or char:FindFirstChild("HumanoidRootPart")
 					if part then
-						local directionToTarget = (part.Position - cameraCFrame.Position).Unit
+						local directionToTarget = (part.Position - cameraCFrame.Position).Magnitude
 						if directionToTarget < closestDist then
 							closestDist = directionToTarget
 							closestTarget = part
@@ -336,7 +336,7 @@ local MainToggles = {
 				for _, bot in pairs(getAliveZombies()) do
 					local part = bot:FindFirstChild(AIM_PART) or bot:FindFirstChild("HumanoidRootPart")
 					if part then
-						local directionToTarget = (part.Position - cameraCFrame.Position).Unit
+						local directionToTarget = (part.Position - cameraCFrame.Position).Magnitude
 						if directionToTarget < closestDist then
 							closestDist = directionToTarget
 							closestTarget = part
