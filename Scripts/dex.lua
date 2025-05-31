@@ -10783,6 +10783,7 @@ Main = (function()
 			rawAPI = oldgame:HttpGet("https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/roblox/API-Dump.json")
 			Main.RawAPI = rawAPI
 			api = jsonDecode(rawAPI)
+			print(api)
 		end
 
 		local classes,enums = {},{}
