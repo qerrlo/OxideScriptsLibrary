@@ -38,7 +38,7 @@ local VoiceChatService = game:GetService("VoiceChatService")
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.11"
+local CurrentVersion = "1.12"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -284,41 +284,67 @@ local MainToggles = {
 			end
 
 			local function getClosestTarget()
-				local function getClosestTargetByAngle(maxAngle)
-					local cameraCFrame = workspace.CurrentCamera.CFrame
-					local cameraLookVector = cameraCFrame.LookVector
+				--local function getClosestTargetByAngle(maxAngle)
+				--	local cameraCFrame = workspace.CurrentCamera.CFrame
+				--	local cameraLookVector = cameraCFrame.LookVector
 
-					local closestTarget = nil
-					local smallestAngle = math.rad(maxAngle)
+				--	local closestTarget = nil
+				--	local smallestAngle = math.rad(maxAngle)
 
-					for _, char in pairs(getEnemyPlayers()) do
-						local part = char:FindFirstChild(AIM_PART) or char:FindFirstChild("HumanoidRootPart")
-						if part then
-							local directionToTarget = (part.Position - cameraCFrame.Position).Unit
-							local angle = math.acos(cameraLookVector:Dot(directionToTarget))
-							if angle < smallestAngle then
-								smallestAngle = angle
-								closestTarget = part
-							end
+				--	for _, char in pairs(getEnemyPlayers()) do
+				--		local part = char:FindFirstChild(AIM_PART) or char:FindFirstChild("HumanoidRootPart")
+				--		if part then
+				--			local directionToTarget = (part.Position - cameraCFrame.Position).Unit
+				--			local angle = math.acos(cameraLookVector:Dot(directionToTarget))
+				--			if angle < smallestAngle then
+				--				smallestAngle = angle
+				--				closestTarget = part
+				--			end
+				--		end
+				--	end
+
+				--	for _, bot in pairs(getAliveZombies()) do
+				--		local part = bot:FindFirstChild(AIM_PART) or bot:FindFirstChild("HumanoidRootPart")
+				--		if part then
+				--			local directionToTarget = (part.Position - cameraCFrame.Position).Unit
+				--			local angle = math.acos(cameraLookVector:Dot(directionToTarget))
+				--			if angle < smallestAngle then
+				--				smallestAngle = angle
+				--				closestTarget = part
+				--			end
+				--		end
+				--	end
+
+				--	return closestTarget
+				--end
+
+				local cameraCFrame = workspace.CurrentCamera.CFrame
+				local closestTarget = nil
+				local closestDist = AIM_RADIUS
+
+				for _, char in pairs(getEnemyPlayers()) do
+					local part = char:FindFirstChild(AIM_PART) or char:FindFirstChild("HumanoidRootPart")
+					if part then
+						local directionToTarget = (part.Position - cameraCFrame.Position).Unit
+						if directionToTarget < closestDist then
+							closestDist = directionToTarget
+							closestTarget = part
 						end
 					end
-
-					for _, bot in pairs(getAliveZombies()) do
-						local part = bot:FindFirstChild(AIM_PART) or bot:FindFirstChild("HumanoidRootPart")
-						if part then
-							local directionToTarget = (part.Position - cameraCFrame.Position).Unit
-							local angle = math.acos(cameraLookVector:Dot(directionToTarget))
-							if angle < smallestAngle then
-								smallestAngle = angle
-								closestTarget = part
-							end
-						end
-					end
-
-					return closestTarget
 				end
-				
-				return getClosestTargetByAngle(15)
+
+				for _, bot in pairs(getAliveZombies()) do
+					local part = bot:FindFirstChild(AIM_PART) or bot:FindFirstChild("HumanoidRootPart")
+					if part then
+						local directionToTarget = (part.Position - cameraCFrame.Position).Unit
+						if directionToTarget < closestDist then
+							closestDist = directionToTarget
+							closestTarget = part
+						end
+					end
+				end
+
+				return closestTarget
 			end
 
 			local function canSeeTarget(targetPart)
@@ -394,7 +420,7 @@ local MainToggles = {
 		Name = "Destroy All Barricades [Only Zombie]",
 		Callback = function(Value)
 			_G.Toggle_DestroyBarricades = Value
-			
+
 			local function getZombieCharacter()
 				local character = Players.LocalPlayer.Character
 				if not character then return nil end
