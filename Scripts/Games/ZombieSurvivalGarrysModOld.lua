@@ -350,7 +350,7 @@ local MainToggles = {
 			local updateInterval = 0.15
 			local lastUpdate = 0
 			if Value then
-				con = RunService.RenderStepped:Connect(function()
+				con = RunService.RenderStepped:Connect(function(dt)
 					lastUpdate = lastUpdate + dt
 					if lastUpdate < updateInterval then return end
 					lastUpdate = 0
@@ -408,7 +408,7 @@ local MainToggles = {
 			if Value then
 				local updateInterval = 0.15
 				local lastUpdate = 0
-				con = RunService.RenderStepped:Connect(function()
+				con = RunService.RenderStepped:Connect(function(dt)
 					lastUpdate = lastUpdate + dt
 					if lastUpdate < updateInterval then return end
 					lastUpdate = 0
