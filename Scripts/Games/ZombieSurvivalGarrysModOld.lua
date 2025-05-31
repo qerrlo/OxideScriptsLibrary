@@ -1,3 +1,4 @@
+
 -- Author: @hinorium
 -- Game: Zombie Survival Garry's Mod [Old]
 
@@ -37,7 +38,7 @@ local VoiceChatService = game:GetService("VoiceChatService")
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.10"
+local CurrentVersion = "1.11"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -244,39 +245,28 @@ local MainToggles = {
 		Flag = "__Toggle_AimAssist",
 		Name = "AimAssist",
 		Callback = function(Value)
+			_G.Toggle_AimAssist = Value
+
 			local localPlayer = Players.LocalPlayer
-			local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 			local camera = workspace.CurrentCamera
 			local botsFolder = workspace:WaitForChild("Bots")
-			local teamService = game:GetService("Teams")
+			local RunService = game:GetService("RunService")
+			local TweenService = game:GetService("TweenService")
 
 			local AIM_RADIUS = 60
-			local TWEEN_TIME = 0.25
+			local TWEEN_TIME = 0.15
 			local AIM_PART = "Head"
 
 			local tweenInfo = TweenInfo.new(TWEEN_TIME, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
 
-			local currentTweenTask = nil
-
-			local function smoothAim(fromRotation, toRotation, tweenInfo)
-				local startTime = os.clock()
-				local elapsed = 0
-				while elapsed <= 1 do
-					local alpha = (os.clock() - startTime) / tweenInfo.Time
-					alpha = math.clamp(alpha, 0, 1)
-					local easedAlpha = TweenService:GetValue(alpha, tweenInfo.EasingStyle, tweenInfo.EasingDirection)
-					local newRotation = fromRotation:Lerp(toRotation, easedAlpha)
-					camera.CFrame = CFrame.new(camera.CFrame.Position) * newRotation
-					RunService.RenderStepped:Wait()
-					elapsed = alpha
-				end
-				currentTweenTask = nil
-			end
+			local currentTween = nil
+			local connection
 
 			local function getEnemyPlayers()
 				local enemies = {}
+				local localTeam = localPlayer.Team
 				for _, player in pairs(Players:GetPlayers()) do
-					if player ~= localPlayer and player.Team ~= localPlayer.Team and player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
+					if player ~= localPlayer and player.Team ~= localTeam and player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
 						table.insert(enemies, player.Character)
 					end
 				end
@@ -285,9 +275,11 @@ local MainToggles = {
 
 			local function getAliveZombies()
 				local zombies = {}
-				for _, bot in pairs(botsFolder:GetChildren()) do
-					if localPlayer.Team ~= "Zombies" and bot:FindFirstChild("Humanoid") and bot.Humanoid.Health > 0 then
-						table.insert(zombies, bot)
+				if localPlayer.Team.Name ~= "Zombies" then
+					for _, bot in pairs(botsFolder:GetChildren()) do
+						if bot:FindFirstChild("Humanoid") and bot.Humanoid.Health > 0 then
+							table.insert(zombies, bot)
+						end
 					end
 				end
 				return zombies
@@ -345,36 +337,64 @@ local MainToggles = {
 					return true
 				end
 			end
-			
-			local con
-			local updateInterval = 0.15
-			local lastUpdate = 0
-			if Value then
-				con = RunService.RenderStepped:Connect(function(dt)
+
+			local function smoothAim(toRotation)
+				if currentTween then
+					currentTween:Cancel()
+					currentTween = nil
+				end
+
+				local goal = {CFrame = CFrame.new(camera.CFrame.Position) * toRotation}
+				currentTween = TweenService:Create(camera, tweenInfo, goal)
+				currentTween:Play()
+				currentTween.Completed:Connect(function()
+					currentTween = nil
+				end)
+			end
+
+			if connection then
+				connection:Disconnect()
+				connection = nil
+			end
+
+			if _G.Toggle_AimAssist then
+				local updateInterval = 0.15
+				local lastUpdate = 0
+
+				connection = RunService.RenderStepped:Connect(function(dt)
 					lastUpdate = lastUpdate + dt
 					if lastUpdate < updateInterval then return end
 					lastUpdate = 0
-							
+
 					local targetPart = getClosestTarget()
 					if targetPart and canSeeTarget(targetPart) then
-						if currentTweenTask then
-							task.cancel(currentTweenTask)
-						end
-						currentTweenTask = task.spawn(smoothAim, camera.CFrame.Rotation, CFrame.new(camera.CFrame.Position, targetPart.Position).Rotation, tweenInfo)
+						smoothAim(CFrame.new(camera.CFrame.Position, targetPart.Position).Rotation)
 					end
 				end)
+
 				notify('Info', 'Aim Assist! [Enabled]')
 			else
-				con:Disconnect()
+				if currentTween then
+					currentTween:Cancel()
+					currentTween = nil
+				end
+
+				if connection then
+					connection:Disconnect()
+					connection = nil
+				end
+
 				notify('Info', 'Aim Assist! [Disabled]')
 			end
 		end,
 	}),
 	DestroyBarricades = MainTab:CreateToggle({
 		CurrentValue = false,
-		Flag = "__Toggle_ESP",
+		Flag = "__Toggle_DAB",
 		Name = "Destroy All Barricades [Only Zombie]",
 		Callback = function(Value)
+			_G.Toggle_DestroyBarricades = Value
+			
 			local function getZombieCharacter()
 				local character = Players.LocalPlayer.Character
 				if not character then return nil end
@@ -405,16 +425,16 @@ local MainToggles = {
 			end
 
 			local con
-			if Value then
+			if not _G.Toggle_DestroyBarricades then
 				local updateInterval = 0.15
 				local lastUpdate = 0
 				con = RunService.RenderStepped:Connect(function(dt)
 					lastUpdate = lastUpdate + dt
 					if lastUpdate < updateInterval then return end
 					lastUpdate = 0
-							
+
 					local barricadesModel = workspace:FindFirstChild("Barricades") 
-					and workspace.Barricades:FindFirstChild("Model")
+						and workspace.Barricades:FindFirstChild("Model")
 
 					if not barricadesModel then return end
 
