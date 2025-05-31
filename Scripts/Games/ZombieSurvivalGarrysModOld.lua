@@ -37,7 +37,7 @@ local VoiceChatService = game:GetService("VoiceChatService")
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.0.7"
+local CurrentVersion = "1.0.8"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -347,8 +347,14 @@ local MainToggles = {
 			end
 			
 			local con
+			local updateInterval = 0.15
+			local lastUpdate = 0
 			if Value then
 				con = RunService.RenderStepped:Connect(function()
+					lastUpdate = lastUpdate + dt
+					if lastUpdate < updateInterval then return end
+					lastUpdate = 0
+							
 					local targetPart = getClosestTarget()
 					if targetPart and canSeeTarget(targetPart) then
 						if currentTweenTask then
@@ -400,7 +406,13 @@ local MainToggles = {
 
 			local con
 			if Value then
+				local updateInterval = 0.15
+				local lastUpdate = 0
 				con = RunService.RenderStepped:Connect(function()
+					lastUpdate = lastUpdate + dt
+					if lastUpdate < updateInterval then return end
+					lastUpdate = 0
+							
 					local barricadesModel = workspace:FindFirstChild("Barricades") 
 					and workspace.Barricades:FindFirstChild("Model")
 
