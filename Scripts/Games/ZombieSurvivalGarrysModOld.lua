@@ -38,7 +38,7 @@ local VoiceChatService = game:GetService("VoiceChatService")
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.12"
+local CurrentVersion = "1.13"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -394,7 +394,8 @@ local MainToggles = {
 
 					local targetPart = getClosestTarget()
 					if targetPart and canSeeTarget(targetPart) then
-						smoothAim(CFrame.new(camera.CFrame.Position, targetPart.Position).Rotation)
+						--smoothAim(CFrame.new(camera.CFrame.Position, targetPart.Position).Rotation)
+						camera.CFrame = CFrame.new(camera.CFrame.p, targetPart.CFrame.p)
 					end
 				end)
 
