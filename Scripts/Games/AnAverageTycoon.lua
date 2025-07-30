@@ -222,7 +222,7 @@ local VisualsTab = Window:CreateTab("Visuals", "user-round-search")
 
 local VisualsButtonsSection = VisualsTab:CreateSection("Buttons")
 local VisualsButtons = {
-	monsters_esp = MainTab:CreateToggle({
+	monsters_esp = VisualsTab:CreateToggle({
 		Name = "[" .. get_toggle_state(_G.visuals.esp.monsters.toggle) .. "] - Toggle Monsters ESP",
 		CurrentValue = false,
 		Flag = "VISUALS-MONSTERS-ESP",
