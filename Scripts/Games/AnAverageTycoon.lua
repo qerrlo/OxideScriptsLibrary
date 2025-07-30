@@ -125,9 +125,9 @@ end
 
 function get_click_prompt_from_tycoon(tycoon: Instance)
 	for _, object in tycoon:GetDescendants() do
-		if object:IsA("ProximityPrompt") and object.Parent.Parent.Parent.Name == "BoughtItems" then
+		if object:IsA("ProximityPrompt") and object.Parent.Parent.Name == "BoughtItems" then
 			return object
-		elseif object:IsA("ClickDetector") and object.Parent.Parent.Parent.Name == "BoughtItems" then
+		elseif object:IsA("ClickDetector") and object.Parent.Parent.Name == "BoughtItems" then
 			return object
 		end
 	end
