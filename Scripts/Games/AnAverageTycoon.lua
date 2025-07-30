@@ -123,7 +123,7 @@ function get_player_tycoon()
 	return nil
 end
 
-function get_click_prompt_from_tycoon(tycoon: Instance)
+function get_click_prompt_from_tycoon(tycoon)
 	for _, object in tycoon:GetDescendants() do
 		if object:IsA("ProximityPrompt") and object.Parent.Parent.Parent.Name == "BoughtItems" then
 			return object
@@ -173,15 +173,11 @@ local MainButtons = {
 		Name = "[GET] - Dropper ClickDetector or ProximityPrompt",
 		Callback = function()
 			if _G.main.auto_click_dropper.object == nil then
-				if _G.player.tycoon == nil then
-					_G.player.tycoon = get_player_tycoon()
+				_G.player.tycoon = get_player_tycoon()
+				if _G.main.auto_click_dropper.object == nil then
+					_G.main.auto_click_dropper.object = get_click_prompt_from_tycoon(_G.player.tycoon)
 				end
-				if _G.player.tycoon then
-					if _G.main.auto_click_dropper.object == nil then
-						_G.main.auto_click_dropper.object = get_click_prompt_from_tycoon(_G.player.tycoon)
-					end
-					notify("[DEBUG]", "Found a Click Instance")
-				end
+				notify("[DEBUG]", "Found a Click Instance")
 			else
 				notify("[DEBUG]", "Already founded a Click Instance")
 			end
