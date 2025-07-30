@@ -174,8 +174,8 @@ local MainButtons = {
 		Callback = function()
 			if _G.main.auto_click_dropper.object == nil then
 				_G.player.tycoon = get_player_tycoon()
-				if _G.main.auto_click_dropper.object == nil then
-					_G.main.auto_click_dropper.object = get_click_prompt_from_tycoon(_G.player.tycoon)
+				if _G.player.tycoon and _G.main.auto_click_dropper.object == nil then
+					_G.main.auto_click_dropper.object = get_click_prompt_from_tycoon(_G.player.tycoon or get_player_tycoon())
 				end
 				notify("[DEBUG]", "Found a Click Instance")
 			else
