@@ -1,5 +1,5 @@
 -- Author: @hinorium
--- Game: An Average Tycoon
+-- Game: Our Execution
 
 function missing(t, f, fallback)
 	if type(f) == t then return f end
@@ -41,7 +41,7 @@ local VoiceChatService = cloneref(game:GetService("VoiceChatService"))
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.0.5"
+local CurrentVersion = "1.0.6"
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = cloneref(LocalPlayer:FindFirstChildWhichIsA("PlayerGui"))
@@ -117,7 +117,9 @@ end
 
 re_fire_server = function(re, args)
 	if not re then return end
-	re:FireServer(unpack(args))
+	if re:IsA("RemoteEvent") then
+		re:FireServer(unpack(args))
+	end
 end
 
 function get_toggle_state(toggle: boolean)
@@ -132,6 +134,11 @@ _G.main = {
 	kill_aura = {
 		toggle = false;
 	};
+	melee = {
+		hitbox = {
+			name = "none";
+		};
+	};
 };
 
 _G.visuals = {
@@ -145,6 +152,7 @@ _G.visuals = {
 _G.connections = {
 	kill_aura = nil;
 	auto_fire = nil;
+	melee_hitbox_expander = nil;
 }
 
 local MainTab = Window:CreateTab("Main", "code-xml")
@@ -184,6 +192,83 @@ local MainButtons = {
 					_G.connections.kill_aura = nil
 				end
 				notify("[DEBUG]", "Kill Aura - Disabled")
+			end
+		end,
+	}),
+	melee_hitbox_expander = MainTab:CreateToggle({
+		Name = "[Melee] - Kill Aura",
+		CurrentValue = false,
+		Flag = "MAIN-KILL-AURA",
+		Callback = function(Value)
+			if Value then
+				if _G.connections.melee_hitbox_expander ~= nil then
+					_G.connections.melee_hitbox_expander:Disconnect()
+					_G.connections.melee_hitbox_expander = nil
+				end
+				_G.connections.melee_hitbox_expander = LocalPlayer.Character.ChildAdded:Connect(function(child)
+					if child:IsA("Tool") then
+						local tool, tool_type = get_tool()
+						if tool and tool_type == "melee" then
+							local hitbox = tool:FindFirstChild("Hitbox")
+							if not hitbox then return end
+							if _G.main.melee.hitbox.name == "none" then
+								_G.main.melee.hitbox.name = HttpService:GenerateGUID(false)
+							end
+							if not hitbox:GetAttribute(_G.main.melee.hitbox.name) then 
+								hitbox:SetAttribute(_G.main.melee.hitbox.name, hitbox.Size)
+							end
+							hitbox.Size = hitbox.Size + Vector3.new(20, 20, 20)
+						end
+					end
+				end)
+				
+				for _, child in LocalPlayer.Character:GetChildren() do
+					if child:IsA("Tool") then
+						local tool, tool_type = get_tool()
+						if tool and tool_type == "melee" then
+							local hitbox = tool:FindFirstChild("Hitbox")
+							if not hitbox then return end
+							if _G.main.melee.hitbox.name == "none" then
+								_G.main.melee.hitbox.name = HttpService:GenerateGUID(false)
+							end
+							if not hitbox:GetAttribute(_G.main.melee.hitbox.name) then 
+								hitbox:SetAttribute(_G.main.melee.hitbox.name, hitbox.Size)
+							end
+							hitbox.Size = hitbox.Size + Vector3.new(20, 20, 20)
+						end
+					end
+				end
+				notify("[DEBUG]", "Melee Hitbox Expander - Enabled")
+			else
+				if _G.connections.melee_hitbox_expander then
+					_G.connections.melee_hitbox_expander:Disconnect()
+					_G.connections.melee_hitbox_expander = nil
+					
+					LocalPlayer.Character.ChildRemoving:Once(function(child)
+						if child:IsA("Tool") then
+							local tool, tool_type = get_tool()
+							if tool and tool_type == "melee" then
+								local hitbox = tool:FindFirstChild("Hitbox")
+								if not hitbox then return end
+								local originalSize = hitbox:GetAttribute(_G.main.melee.hitbox.name)
+								hitbox.Size = originalSize or hitbox.Size - Vector3.new(20, 20, 20)
+							end
+						end
+					end)
+					
+					for _, child in LocalPlayer.Character:GetChildren() do
+						if child:IsA("Tool") then
+							local tool, tool_type = get_tool()
+							if tool and tool_type == "melee" then
+								local hitbox = tool:FindFirstChild("Hitbox")
+								if not hitbox then return end
+								local originalSize = hitbox:GetAttribute(_G.main.melee.hitbox.name)
+								hitbox.Size = originalSize or hitbox.Size - Vector3.new(20, 20, 20)
+							end
+						end
+					end
+				end
+				notify("[DEBUG]", "Melee Hitbox Expander - Disabled")
 			end
 		end,
 	}),
