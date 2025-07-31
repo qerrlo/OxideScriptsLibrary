@@ -41,7 +41,7 @@ local VoiceChatService = cloneref(game:GetService("VoiceChatService"))
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.0.7"
+local CurrentVersion = "1.0.8"
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = cloneref(LocalPlayer:FindFirstChildWhichIsA("PlayerGui"))
@@ -137,6 +137,7 @@ _G.main = {
 	melee = {
 		hitbox = {
 			name = "none";
+			object = nil;
 		};
 	};
 };
@@ -217,6 +218,7 @@ local MainButtons = {
 							if not hitbox:GetAttribute(_G.main.melee.hitbox.name) then 
 								hitbox:SetAttribute(_G.main.melee.hitbox.name, hitbox.Size)
 							end
+							_G.main.melee.hitbox.object = hitbox
 							hitbox.Size = hitbox.Size + Vector3.new(20, 20, 20)
 						end
 					end
@@ -234,6 +236,7 @@ local MainButtons = {
 							if not hitbox:GetAttribute(_G.main.melee.hitbox.name) then 
 								hitbox:SetAttribute(_G.main.melee.hitbox.name, hitbox.Size)
 							end
+							_G.main.melee.hitbox.object = hitbox
 							hitbox.Size = hitbox.Size + Vector3.new(20, 20, 20)
 						end
 					end
@@ -243,19 +246,12 @@ local MainButtons = {
 				if _G.connections.melee_hitbox_expander then
 					_G.connections.melee_hitbox_expander:Disconnect()
 					_G.connections.melee_hitbox_expander = nil
-
-					LocalPlayer.Character.ChildRemoved:Once(function(child)
-						if child:IsA("Tool") then
-							local tool, tool_type = get_tool()
-							if tool and tool_type == "melee" then
-								local hitbox = tool:FindFirstChild("Hitbox")
-								if not hitbox then return end
-								local originalSize = hitbox:GetAttribute(_G.main.melee.hitbox.name)
-								hitbox.Size = originalSize or hitbox.Size - Vector3.new(20, 20, 20)
-							end
-						end
-					end)
-
+					
+					if _G.main.melee.hitbox.object then
+						local originalSize = _G.main.melee.hitbox.object:GetAttribute(_G.main.melee.hitbox.name)
+						_G.main.melee.hitbox.object.Size = originalSize or _G.main.melee.hitbox.object.Size - Vector3.new(20, 20, 20)
+					end
+					
 					for _, child in LocalPlayer.Character:GetChildren() do
 						if child:IsA("Tool") then
 							local tool, tool_type = get_tool()
