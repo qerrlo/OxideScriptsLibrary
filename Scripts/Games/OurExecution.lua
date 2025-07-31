@@ -41,7 +41,7 @@ local VoiceChatService = cloneref(game:GetService("VoiceChatService"))
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.0.4"
+local CurrentVersion = "1.0.5"
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = cloneref(LocalPlayer:FindFirstChildWhichIsA("PlayerGui"))
@@ -106,6 +106,7 @@ end
 
 get_tool = function()
 	local tool = LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
+	if not tool then return end
 	if tool:FindFirstChild("Swing") then
 		return tool, "melee"
 	elseif tool:FindFirstChild("Firing") then
