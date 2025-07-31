@@ -41,7 +41,7 @@ local VoiceChatService = cloneref(game:GetService("VoiceChatService"))
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.0.3"
+local CurrentVersion = "1.0.4"
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = cloneref(LocalPlayer:FindFirstChildWhichIsA("PlayerGui"))
@@ -143,6 +143,7 @@ _G.visuals = {
 
 _G.connections = {
 	kill_aura = nil;
+	auto_fire = nil;
 }
 
 local MainTab = Window:CreateTab("Main", "code-xml")
@@ -165,7 +166,9 @@ local MainButtons = {
 						local swing_event = tool:FindFirstChild("Swing")
 						local swing_num = 1
 						if swing_event then
-							re_fire_server(tool, {swing_num})
+							re_fire_server(swing_event, {
+								swing_num
+							})
 							swing_num = swing_num + 1
 							if swing_num > 2 then
 								swing_num = 1
@@ -180,6 +183,37 @@ local MainButtons = {
 					_G.connections.kill_aura = nil
 				end
 				notify("[DEBUG]", "Kill Aura - Disabled")
+			end
+		end,
+	}),
+	auto_fire = MainTab:CreateToggle({
+		Name = "[Weapon] - Auto Fire",
+		CurrentValue = false,
+		Flag = "MAIN-AUTO-FIRE",
+		Callback = function(Value)
+			if Value then
+				if _G.connections.auto_fire ~= nil then
+					_G.connections.auto_fire:Disconnect()
+					_G.connections.auto_fire = nil
+				end
+				_G.connections.auto_fire = RunService.Heartbeat:Connect(function(dt)
+					local tool, tool_type = get_tool()
+					if tool and tool_type == "weapon" then
+						local firing_event = tool:FindFirstChild("Firing")
+						if firing_event then
+							re_fire_server(firing_event, {
+								"real", workspace.Camera.CFrame.LookVector
+							})
+						end
+					end
+				end)
+				notify("[DEBUG]", "Auto Fire - Enabled")
+			else
+				if _G.connections.auto_fire then
+					_G.connections.auto_fire:Disconnect()
+					_G.connections.auto_fire = nil
+				end
+				notify("[DEBUG]", "Auto Fire - Disabled")
 			end
 		end,
 	}),
