@@ -212,7 +212,7 @@ local MainButtons = {
 							local hitbox = tool:FindFirstChild("Hitbox")
 							if not hitbox then return end
 							if _G.main.melee.hitbox.name == "none" then
-								_G.main.melee.hitbox.name = HttpService:GenerateGUID(false)
+								_G.main.melee.hitbox.name = "original_size"
 							end
 							if not hitbox:GetAttribute(_G.main.melee.hitbox.name) then 
 								hitbox:SetAttribute(_G.main.melee.hitbox.name, hitbox.Size)
@@ -229,7 +229,7 @@ local MainButtons = {
 							local hitbox = tool:FindFirstChild("Hitbox")
 							if not hitbox then return end
 							if _G.main.melee.hitbox.name == "none" then
-								_G.main.melee.hitbox.name = HttpService:GenerateGUID(false)
+								_G.main.melee.hitbox.name = "original_size"
 							end
 							if not hitbox:GetAttribute(_G.main.melee.hitbox.name) then 
 								hitbox:SetAttribute(_G.main.melee.hitbox.name, hitbox.Size)
@@ -244,7 +244,7 @@ local MainButtons = {
 					_G.connections.melee_hitbox_expander:Disconnect()
 					_G.connections.melee_hitbox_expander = nil
 
-					LocalPlayer.Character.ChildRemoving:Once(function(child)
+					LocalPlayer.Character.ChildRemoved:Once(function(child)
 						if child:IsA("Tool") then
 							local tool, tool_type = get_tool()
 							if tool and tool_type == "melee" then
