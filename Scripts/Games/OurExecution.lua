@@ -41,7 +41,7 @@ local VoiceChatService = cloneref(game:GetService("VoiceChatService"))
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.0.1"
+local CurrentVersion = "1.0.2"
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = cloneref(LocalPlayer:FindFirstChildWhichIsA("PlayerGui"))
@@ -165,7 +165,7 @@ local MainButtons = {
 						local swing_event = tool:FindFirstChild("Swing")
 						local swing_num = 1
 						if swing_event then
-							re_fire_server(tool, swing_num)
+							re_fire_server(tool, {swing_num})
 							swing_num = swing_num + 1
 							if swing_num > 2 then
 								swing_num = 1
