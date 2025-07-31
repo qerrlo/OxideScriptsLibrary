@@ -196,7 +196,7 @@ local VisualsButtons = {
 		Callback = function(Value)
 			_G.visuals.esp.zombies.toggle = Value
 			if Value then
-				workspace.Monsters.ChildAdded:Connect(function(child)
+				workspace.AliveZombies.ChildAdded:Connect(function(child)
 					if not child:FindFirstChildWhichIsA("Highlight") and child.Name == "zombie_esp" then
 						local chams = Instance.new("Highlight")
 						chams.Name = "zombie_esp"
@@ -204,7 +204,7 @@ local VisualsButtons = {
 					end
 				end)
 
-				for _, child in workspace.Monsters:GetChildren() do
+				for _, child in workspace.AliveZombies:GetChildren() do
 					if not child:FindFirstChildWhichIsA("Highlight") and child.Name == "zombie_esp" then
 						local chams = Instance.new("Highlight")
 						chams.Name = "zombie_esp"
@@ -213,7 +213,7 @@ local VisualsButtons = {
 				end
 				notify("[DEBUG]", "Zombies ESP - Enabled")
 			else
-				for _, child in workspace.Monsters:GetChildren() do
+				for _, child in workspace.AliveZombies:GetChildren() do
 					if child:FindFirstChildWhichIsA("Highlight") and child.Name == "zombie_esp" then
 						child:Destroy()
 					end
