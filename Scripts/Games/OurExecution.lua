@@ -46,11 +46,6 @@ local CurrentVersion = "1.0"
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = cloneref(LocalPlayer:FindFirstChildWhichIsA("PlayerGui"))
 
-local function updateCharacter(newCharacter)
-	Character = newCharacter
-end
-LocalPlayer.CharacterAdded:Connect(updateCharacter)
-
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
@@ -116,6 +111,7 @@ get_tool = function()
 	elseif tool:FindFirstChild("Firing") then
 		return tool, "weapon"
 	end
+	return nil
 end
 
 re_fire_server = function(re, args)
