@@ -196,9 +196,9 @@ local MainButtons = {
 		end,
 	}),
 	melee_hitbox_expander = MainTab:CreateToggle({
-		Name = "[Melee] - Kill Aura",
+		Name = "[Melee] - Hitbox Expander",
 		CurrentValue = false,
-		Flag = "MAIN-KILL-AURA",
+		Flag = "MAIN-HITBOX-EXPANDER",
 		Callback = function(Value)
 			if Value then
 				if _G.connections.melee_hitbox_expander ~= nil then
@@ -221,7 +221,7 @@ local MainButtons = {
 						end
 					end
 				end)
-				
+
 				for _, child in LocalPlayer.Character:GetChildren() do
 					if child:IsA("Tool") then
 						local tool, tool_type = get_tool()
@@ -243,7 +243,7 @@ local MainButtons = {
 				if _G.connections.melee_hitbox_expander then
 					_G.connections.melee_hitbox_expander:Disconnect()
 					_G.connections.melee_hitbox_expander = nil
-					
+
 					LocalPlayer.Character.ChildRemoving:Once(function(child)
 						if child:IsA("Tool") then
 							local tool, tool_type = get_tool()
@@ -255,7 +255,7 @@ local MainButtons = {
 							end
 						end
 					end)
-					
+
 					for _, child in LocalPlayer.Character:GetChildren() do
 						if child:IsA("Tool") then
 							local tool, tool_type = get_tool()
