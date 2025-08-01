@@ -220,6 +220,8 @@ local MainButtons = {
 							end
 							_G.main.melee.hitbox.object = hitbox
 							hitbox.Size = hitbox.Size + Vector3.new(20, 20, 20)
+							task.wait()
+							hitbox.Size = hitbox.Size = hitbox.Size + Vector3.new(20, 20, 20)
 						end
 					end
 				end)
@@ -238,6 +240,8 @@ local MainButtons = {
 							end
 							_G.main.melee.hitbox.object = hitbox
 							hitbox.Size = hitbox.Size + Vector3.new(20, 20, 20)
+							task.wait()
+							hitbox.Size = hitbox.Size = hitbox.Size + Vector3.new(20, 20, 20)
 						end
 					end
 				end
