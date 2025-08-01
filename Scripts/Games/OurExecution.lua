@@ -282,9 +282,10 @@ local MainButtons = {
 					local tool, tool_type = get_tool()
 					if tool and tool_type == "weapon" then
 						local firing_event = tool:FindFirstChild("Firing")
+						local head = LocalPlayer.Character and LocalPlayer.Chararacter:FindFirstChild("Head")
 						if firing_event then
 							re_fire_server(firing_event, {
-								"real", workspace.Camera.CFrame.LookVector
+								"real", head.CFrame.LookVector
 							})
 						end
 					end
