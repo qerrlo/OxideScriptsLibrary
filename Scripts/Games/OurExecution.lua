@@ -41,7 +41,7 @@ local VoiceChatService = cloneref(game:GetService("VoiceChatService"))
 local PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 
-local CurrentVersion = "1.0.8"
+local CurrentVersion = "1.0.9"
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = cloneref(LocalPlayer:FindFirstChildWhichIsA("PlayerGui"))
