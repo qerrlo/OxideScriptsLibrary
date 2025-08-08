@@ -11282,14 +11282,14 @@ local EmbeddedModules = {
 			Notebook = Apps.Notebook
 		end
 
-		local function sanitazeFileName(str)
-			return string.sub(string.gsub(string.gsub(string.gsub(str, "[^%w] ", ""), " +", ""), " +$", ""), 1, 240)
-		end
+		-- local function sanitazeFileName(str)
+		-- 	return string.sub(string.gsub(string.gsub(string.gsub(str, "[^%w] ", ""), " +", ""), " +$", ""), 1, 240)
+		-- end
 
 		local function main()
 			local SaveInstance = {}
 			local window, ListFrame
-			local sanitazedFileName = sanitazeFileName(service.MarketplaceService:GetProductInfo(game.PlaceId).Name)
+			local sanitazedFileName = service.MarketplaceService:GetProductInfo(game.PlaceId).Name
 			local fileName = "Place_"..game.PlaceId.."_"..sanitazedFileName.."_{TIMESTAMP}"
 			local Saving = false
 
