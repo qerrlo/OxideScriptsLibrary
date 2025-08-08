@@ -11702,11 +11702,7 @@ Main = (function()
 	Main.Elevated = false
 	Main.MissingEnv = {}
 	Main.Version = "" -- Beta 1.0.0
-	if is_on_mobile then
-		Main.Mouse = service.UserInputService:GetMouseDelta()
-	else
-		Main.Mouse = plr:GetMouse()
-	end
+	Main.Mouse = plr:GetMouse()
 	Main.AppControls = {}
 	Main.Apps = Apps
 	Main.MenuApps = {}
