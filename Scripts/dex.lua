@@ -8412,6 +8412,7 @@ local EmbeddedModules = {
 					}
 
 					checkbox.Activated:Connect(function()
+						print("[DEBUG - DEX]: attempt to fire")
 						if Lib.CheckMouseInGui(checkbox) then
 							if self.Style == 0 then
 								ripple(ripples_container, self.Disabled and self.Colors.Disabled or self.Colors.Primary)
