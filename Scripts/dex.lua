@@ -9,6 +9,8 @@
 	Dex is a debugging suite designed to help the user debug games and find any potential vulnerabilities.
 ]]
 
+print("vdebug")
+
 local nodes = {}
 local selection
 
