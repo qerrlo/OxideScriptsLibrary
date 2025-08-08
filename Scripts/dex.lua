@@ -11290,7 +11290,7 @@ local EmbeddedModules = {
 			local SaveInstance = {}
 			local window, ListFrame
 			local sanitazedFileName = sanitazeFileName(service.MarketplaceService:GetProductInfo(game.PlaceId).Name)
-			local fileName = "Place_"..game.PlaceId.."_"..sanitazedFileName.Name.."_{TIMESTAMP}"
+			local fileName = "Place_"..game.PlaceId.."_"..sanitazedFileName.."_{TIMESTAMP}"
 			local Saving = false
 
 			local SaveInstanceArgs = {
