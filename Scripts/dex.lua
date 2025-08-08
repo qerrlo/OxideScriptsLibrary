@@ -4221,7 +4221,7 @@ local EmbeddedModules = {
 		local Main,Lib,Apps,Settings -- Main Containers
 		local Explorer, Properties, ScriptViewer, Notebook -- Major Apps
 		local API,RMD,env,service,plr,create,createSimple -- Main Locals
-
+		
 		local IsOnMobile = table.find({Enum.Platform.Android, Enum.Platform.IOS}, service.UserInputService:GetPlatform())
 
 		local function initDeps(data)
