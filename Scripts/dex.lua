@@ -24,6 +24,8 @@ local service = setmetatable({}, {
 	end
 })
 
+local is_on_mobile = table.find({Enum.Platform.Android, Enum.Platform.IOS}, service.UserInputService:GetPlatform())
+
 -- prevent environment implosion from references
 -- mainly from the executor not having some game properties in their game variable
 -- so we gotta use vanilla game
@@ -4258,7 +4260,11 @@ local EmbeddedModules = {
 			ScriptViewer.Init = function()
 				window = Lib.Window.new()
 				window:SetTitle("Script Viewer")
-				window:Resize(500, 400)
+				if is_on_mobile then
+					window:Resize(500, 300)
+				else
+					window:Resize(500, 400)
+				end
 				ScriptViewer.Window = window
 
 				codeFrame = Lib.CodeFrame.new()
@@ -8876,7 +8882,11 @@ local EmbeddedModules = {
 					window.Resizable = false
 					window.Alignable = false
 					window:SetTitle("Color Picker")
-					window:Resize(450,330)
+					if is_on_mobile then
+						window:Resize(450,300)
+					else
+						window:Resize(450,330)
+					end
 					for i,v in pairs(guiContents:GetChildren()) do
 						v.Parent = window.GuiElems.Content
 					end
@@ -10486,7 +10496,11 @@ local EmbeddedModules = {
 			-- StarterGui.ScreenGui
 			window = Lib.Window.new()
 			window:SetTitle("Console")
-			window:Resize(500,400)
+			if is_on_mobile then
+				window:Resize(500,300)	
+			else
+				window:Resize(500,400)
+			end
 			Console.Window = window
 
 			-- StarterGui.ScreenGui.Console
@@ -11398,7 +11412,11 @@ local EmbeddedModules = {
 			SaveInstance.Init = function()
 				window = Lib.Window.new()
 				window:SetTitle("Save Instance")
-				window:Resize(350,350)
+				if is_on_mobile then
+					window:Resize(350,300)
+				else
+					window:Resize(350,350)
+				end
 				SaveInstance.Window = window
 
 				-- ListFrame
@@ -11612,7 +11630,7 @@ DefaultSettings = (function()
 			MiscIconMap = "",
 			Syntax = {
 				Text = rgb(204,204,204),
-				Background = rgb(36,36,36),
+				Background = rgb(37,37,37),
 				Selection = rgb(255,255,255),
 				SelectionBack = rgb(11,90,175),
 				Operator = rgb(204,204,204),
@@ -11930,7 +11948,7 @@ Main = (function()
 
 		-- backup for kaboom
 		if not api then
-			rawAPI = oldgame:HttpGet("https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/rbx_api.dat")
+			rawAPI = oldgame:HttpGet("https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/refs/heads/roblox/API-Dump.json")
 			Main.RawAPI = rawAPI
 			api = jsonDecode(rawAPI)
 		end
@@ -12072,7 +12090,7 @@ Main = (function()
 					Main.DepsVersionData[1] = ""
 				end
 			end
-			rawXML = rawXML or oldgame:HttpGet("https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Client-Tracker/roblox/ReflectionMetadata.xml")
+			rawXML = rawXML or oldgame:HttpGet("https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/refs/heads/roblox/ReflectionMetadata.xml")
 		else
 			if script:FindFirstChild("RMD") then
 				rawXML = require(script.RMD)
@@ -12199,7 +12217,7 @@ Main = (function()
 			{8,"Frame",{BackgroundColor3=Color3.new(0.20392157137394,0.20392157137394,0.20392157137394),BorderSizePixel=0,Name="ProgressBar",Parent={3},Position=UDim2.new(0,110,0,145),Size=UDim2.new(0,0,0,4),}},
 			{9,"Frame",{BackgroundColor3=Color3.new(0.2392156869173,0.56078433990479,0.86274510622025),BorderSizePixel=0,Name="Bar",Parent={8},Size=UDim2.new(0,0,1,0),}},
 			{10,"ImageLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Image="rbxassetid://2764171053",ImageColor3=Color3.new(0.17647059261799,0.17647059261799,0.17647059261799),Parent={8},ScaleType=1,Size=UDim2.new(1,0,1,0),SliceCenter=Rect.new(2,2,254,254),}},
-			{11,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Creator",Parent={2},Position=UDim2.new(1,-110,1,-20),Size=UDim2.new(0,105,0,20),Text="Developed by Moon | Edited by 0x1de2",TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=1,}},
+			{11,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Creator",Parent={2},Position=UDim2.new(1,-110,1,-20),Size=UDim2.new(0,105,0,20),Text="Developed by Moon | Edited by 0x1de",TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=1,}},
 			{12,"UIGradient",{Parent={11},Transparency=NumberSequence.new({NumberSequenceKeypoint.new(0,1,0),NumberSequenceKeypoint.new(1,1,0),}),}},
 			{13,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Version",Parent={2},Position=UDim2.new(1,-110,1,-35),Size=UDim2.new(0,105,0,20),Text=Main.Version,TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=1,}},
 			{14,"UIGradient",{Parent={13},Transparency=NumberSequence.new({NumberSequenceKeypoint.new(0,1,0),NumberSequenceKeypoint.new(1,1,0),}),}},
@@ -12627,7 +12645,7 @@ Main = (function()
 
 			-- backup for kaboom
 			if #Main.RobloxVersion < 1 then
-				Main.RobloxVersion = oldgame:HttpGet("https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/deps_version.dat"):gsub("%s+", "")
+				Main.RobloxVersion = oldgame:HttpGet("https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/refs/heads/roblox/version-guid.txt"):gsub("%s+", "")
 			end
 		end
 
