@@ -4222,6 +4222,8 @@ local EmbeddedModules = {
 		local Explorer, Properties, ScriptViewer, Notebook -- Major Apps
 		local API,RMD,env,service,plr,create,createSimple -- Main Locals
 
+		local IsOnMobile = table.find({Enum.Platform.Android, Enum.Platform.IOS}, service.UserInputService:GetPlatform())
+
 		local function initDeps(data)
 			Main = data.Main
 			Lib = data.Lib
@@ -4259,7 +4261,7 @@ local EmbeddedModules = {
 			ScriptViewer.Init = function()
 				window = Lib.Window.new()
 				window:SetTitle("Script Viewer")
-				if input.TouchEnabled then
+				if IsOnMobile then
 					window:Resize(500, 300)
 				else
 					window:Resize(500, 400)
