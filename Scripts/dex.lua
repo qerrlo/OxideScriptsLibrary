@@ -11281,11 +11281,16 @@ local EmbeddedModules = {
 			ScriptViewer = Apps.ScriptViewer
 			Notebook = Apps.Notebook
 		end
-
+		
+		local function sanitazeFileName(str)
+			return string.sub(string.gsub(string.gsub(string.gsub(str, "[^%w _]", "_"), " +", "_"), " +$", "_"), 1, 240)
+		end
+		
 		local function main()
 			local SaveInstance = {}
 			local window, ListFrame
-			local fileName = "Place_"..game.PlaceId.."_"..service.MarketplaceService:GetProductInfo(game.PlaceId).Name.."_{TIMESTAMP}"
+			local sanitazedFileName = sanitazeFileName(service.MarketplaceService:GetProductInfo(game.PlaceId).Name) or service.MarketplaceService:GetProductInfo(game.PlaceId).Name
+			local fileName = "Place_"..game.PlaceId.."_"..sanitazedFileName.."_{TIMESTAMP}"
 			local Saving = false
 
 			local SaveInstanceArgs = {
