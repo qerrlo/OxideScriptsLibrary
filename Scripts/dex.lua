@@ -9,8 +9,6 @@
 	Dex is a debugging suite designed to help the user debug games and find any potential vulnerabilities.
 ]]
 
-print("vdebug 221312")
-
 local nodes = {}
 local selection
 
@@ -8414,7 +8412,6 @@ local EmbeddedModules = {
 					}
 
 					checkbox.Activated:Connect(function()
-						print("[DEBUG - DEX]: attempt to fire")
 						if Lib.CheckMouseInGui(checkbox) then
 							if self.Style == 0 then
 								ripple(ripples_container, self.Disabled and self.Colors.Disabled or self.Colors.Primary)
@@ -8427,7 +8424,6 @@ local EmbeddedModules = {
 							end
 
 							self.OnInput:Fire()
-							print("[DEBUG - DEX]: fired")
 						end
 					end)
 
@@ -11297,18 +11293,35 @@ local EmbeddedModules = {
 			local fileName = "Place_"..game.PlaceId.."_"..sanitazedFileName.."_{TIMESTAMP}"
 			local Saving = false
 
-			local SaveInstanceArgs = {
-				Decompile = true,
-				DecompileTimeout = 10,
-				DecompileIgnore = {"Chat", "CoreGui", "CorePackages"},
-				NilInstances = false,
-				RemovePlayerCharacters = true,
-				SavePlayers = false,
-				MaxThreads = 3,
-				ShowStatus = true,
-				IgnoreDefaultProps = true,
-				IsolateStarterPlayer = true
-			}
+			local SaveInstanceArgs = {}
+			
+			if is_on_mobile then
+				SaveInstanceArgs = {
+					Decompile = true,
+					DecompileTimeout = 60,
+					DecompileIgnore = {"Chat", "CoreGui", "CorePackages"},
+					NilInstances = false,
+					RemovePlayerCharacters = false,
+					SavePlayers = true,
+					MaxThreads = 3,
+					ShowStatus = true,
+					IgnoreDefaultProps = true,
+					IsolateStarterPlayer = true
+				}
+			else
+				SaveInstanceArgs = {
+					Decompile = true,
+					DecompileTimeout = 10,
+					DecompileIgnore = {"Chat", "CoreGui", "CorePackages"},
+					NilInstances = false,
+					RemovePlayerCharacters = true,
+					SavePlayers = false,
+					MaxThreads = 3,
+					ShowStatus = true,
+					IgnoreDefaultProps = true,
+					IsolateStarterPlayer = true
+				}
+			end
 
 			local function AddCheckbox(title, default)
 				local frame = Lib.Frame.new()
